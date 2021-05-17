@@ -5,7 +5,7 @@ from gym import spaces
 from nes_py.wrappers import JoypadSpace
 from gym_super_mario_bros.actions import COMPLEX_MOVEMENT
 from stable_baselines3.common.type_aliases import GymObs, GymStepReturn
-from wrappers import CustomSkipFrame, NesFrameGray, NesFrameGrayHalf, RandomStart
+from gym_bz_games.wrappers import CustomSkipFrame, NesFrameGray, NesFrameGrayHalf, RandomStart
 import gym_super_mario_bros
 
 
