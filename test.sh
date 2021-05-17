@@ -1,14 +1,25 @@
-#python enjoy.py --algo ppo --env CartPole-v1 --folder logs/
-#python enjoy.py --algo ppo --env PongNoFrameskip-v4 --folder logs/
+if [ ! $1 ]; then
+  echo "algo is blank, Please Input the 1 parameter."
+  exit 1
+else
+  echo "algo is $1"
+fi 
+
+if [ ! $2 ]; then
+  echo "env is blank, Please Input the 2 parameter."
+  exit 1
+else
+  echo "env is $2"
+fi 
+
 
 while true; do
-  #python enjoy.py --algo ppo --env TetrisA-v0 --folder logs/ --load-best
 
   echo "-------------------------------------"
   echo ">>>> TEST LAST BEGIN + "
   echo ""
 
-  python enjoy.py --algo ppo --env EnvMarioLocal-v0 --folder logs/ --num-threads 1 --n-envs 1 -n 2000 --load-checkpoint-last
+  python baselines3-zoo/enjoy.py --algo $1 --env $2 --folder logs/ --num-threads 1 --n-envs 1 -n 2000 --load-checkpoint-last
 
   echo ""
   echo ">>>> TEST LAST END - "
@@ -21,7 +32,7 @@ while true; do
   echo ">>>> TEST BEST BEGIN + "
   echo ""
 
-  python enjoy.py --algo ppo --env EnvMarioLocal-v0 --folder logs/ --num-threads 1 --n-envs 1 -n 2000 --load-best
+  python baselines3-zoo/enjoy.py --algo $1 --env $2 --folder logs/ --num-threads 1 --n-envs 1 -n 2000 --load-best
 
   echo ""
   echo ">>>> TEST LAST END - "
@@ -32,9 +43,9 @@ while true; do
   echo ">>>> DELETE BEGIN + "
   echo ""
 
-  find logs/ppo/EnvMarioLocal-v0*/ -mmin +30 -name "rl*.zip"
+  find logs/ppo/$2*/ -mmin +60 -name "rl*.zip"
 
-  find logs/ppo/EnvMarioLocal-v0*/ -mmin +30 -name "rl*.zip" -exec rm -rf {} \;
+  find logs/ppo/$2*/ -mmin +60 -name "rl*.zip" -exec rm -rf {} \;
 
 
   echo ""

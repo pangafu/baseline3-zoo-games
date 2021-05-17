@@ -10,8 +10,10 @@ import gym_super_mario_bros
 
 
 class CustomReward(gym.Wrapper):
-    def __init__(self, env: gym.Env):
+    def __init__(self, env: gym.Env, world, stage):
         gym.Wrapper.__init__(self, env)
+        self.world = world
+        self.stage = stage
         self.curr_score = 0
         self.curr_coins = 0
         self.curr_status = 0
@@ -96,14 +98,14 @@ class Mario(gym.Env):
     metadata = {'render.modes':['human']}
 
     def __init__(self, world = 1, stage = 1):
-        self.world = 1
-        self.stage = 1
+        self.world = world
+        self.stage = stage
         env = gym_super_mario_bros.make("SuperMarioBros-{}-{}-v0".format(self.world, self.stage))
         env = JoypadSpace(env, COMPLEX_MOVEMENT)
-        env = CustomReward(env)
         env = CustomSkipFrame(env, skip = 2)
         env = NesFrameGrayHalf(env)
         env = RandomStart(env, rnum = 5)
+        env = CustomReward(env, self.world, self.stage)
 
 
         self.env = env
@@ -142,3 +144,116 @@ class Mario13(Mario):
 class Mario14(Mario):
     def __init__(self):
         Mario.__init__(self, 1, 4)
+
+class Mario21(Mario):
+    def __init__(self):
+        Mario.__init__(self, 2, 1)
+
+class Mario22(Mario):
+    def __init__(self):
+        Mario.__init__(self, 2, 2)
+
+class Mario23(Mario):
+    def __init__(self):
+        Mario.__init__(self, 2, 3)
+
+class Mario24(Mario):
+    def __init__(self):
+        Mario.__init__(self, 2, 4)
+class Mario31(Mario):
+    def __init__(self):
+        Mario.__init__(self, 3, 1)
+
+class Mario32(Mario):
+    def __init__(self):
+        Mario.__init__(self, 3, 2)
+
+class Mario33(Mario):
+    def __init__(self):
+        Mario.__init__(self, 3, 3)
+
+class Mario34(Mario):
+    def __init__(self):
+        Mario.__init__(self, 3, 4)
+
+class Mario41(Mario):
+    def __init__(self):
+        Mario.__init__(self, 4, 1)
+
+class Mario42(Mario):
+    def __init__(self):
+        Mario.__init__(self, 4, 2)
+
+class Mario43(Mario):
+    def __init__(self):
+        Mario.__init__(self, 4, 3)
+
+class Mario44(Mario):
+    def __init__(self):
+        Mario.__init__(self, 4, 4)
+
+class Mario51(Mario):
+    def __init__(self):
+        Mario.__init__(self, 5, 1)
+
+class Mario52(Mario):
+    def __init__(self):
+        Mario.__init__(self, 5, 2)
+
+class Mario53(Mario):
+    def __init__(self):
+        Mario.__init__(self, 5, 3)
+
+class Mario54(Mario):
+    def __init__(self):
+        Mario.__init__(self, 5, 4)
+
+
+class Mario61(Mario):
+    def __init__(self):
+        Mario.__init__(self, 6, 1)
+
+class Mario62(Mario):
+    def __init__(self):
+        Mario.__init__(self, 6, 2)
+
+class Mario63(Mario):
+    def __init__(self):
+        Mario.__init__(self, 6, 3)
+
+class Mario64(Mario):
+    def __init__(self):
+        Mario.__init__(self, 6, 4)
+
+class Mario71(Mario):
+    def __init__(self):
+        Mario.__init__(self, 7, 1)
+
+class Mario72(Mario):
+    def __init__(self):
+        Mario.__init__(self, 7, 2)
+
+class Mario73(Mario):
+    def __init__(self):
+        Mario.__init__(self, 7, 3)
+
+class Mario74(Mario):
+    def __init__(self):
+        Mario.__init__(self, 7, 4)
+
+
+class Mario81(Mario):
+    def __init__(self):
+        Mario.__init__(self, 8, 1)
+
+class Mario82(Mario):
+    def __init__(self):
+        Mario.__init__(self, 8, 2)
+
+class Mario83(Mario):
+    def __init__(self):
+        Mario.__init__(self, 8, 3)
+
+class Mario84(Mario):
+    def __init__(self):
+        Mario.__init__(self, 8, 4)

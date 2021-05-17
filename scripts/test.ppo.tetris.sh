@@ -1,0 +1,1 @@
+./test.sh ppo BZ-Tetris-v0

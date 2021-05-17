@@ -1,8 +1,16 @@
-#python train.py --algo ppo --env CartPole-v1
-#python train.py --algo ppo --env PongNoFrameskip-v4 
-#python train.py --algo ppo --env BreakoutNoFrameskip-v4 --save-freq 10000
-#python train.py --algo ppo --env SuperMarioBros-v0 --save-freq 10000 --n-jobs=8
+if [ ! $1 ]; then
+  echo "algo is blank, Please Input the 1 parameter."
+  exit 1
+else
+  echo "algo is $1"
+fi 
 
-#python train.py --algo ppo --env TetrisA-v0 --save-freq 20480 --eval-freq 20480 --eval-episodes=2 --vec-env=subproc --num-threads=8
+if [ ! $2 ]; then
+  echo "env is blank, Please Input the 2 parameter."
+  exit 1
+else
+  echo "env is $2"
+fi 
 
-python train.py --algo ppo --env EnvMarioLocal-v0 --save-freq 20480 --eval-freq 20480 --eval-episodes=2 --vec-env=subproc --num-threads=8
+
+python baselines3-zoo/train.py --algo $1 --env $2 --save-freq 20480 --eval-freq 20480 --eval-episodes=2 --vec-env=subproc --num-threads=8
