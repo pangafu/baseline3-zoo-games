@@ -4,7 +4,7 @@ import cv2
 from gym import spaces
 from nes_py.wrappers import JoypadSpace
 from stable_baselines3.common.type_aliases import GymObs, GymStepReturn
-from wrappers.common_wrapper import CustomSkipFrame, NesFrameGray, NesFrameGrayHalf, NesFrameGrayCrop, RandomStart, NesFrameBinary, NesFrameGrayScale
+from gym_bz_games.wrappers import CustomSkipFrame, NesFrameGray, NesFrameGrayHalf, NesFrameGrayCrop, RandomStart, NesFrameBinary, NesFrameGrayScale
 from gym_tetris.actions import MOVEMENT
 import gym_tetris
 
@@ -111,7 +111,7 @@ class CustomReward(gym.Wrapper):
 
 
 
-class EnvTetris(gym.Env):
+class Tetris(gym.Env):
     metadata = {'render.modes':['human']}
 
     def __init__(self):
