@@ -1,0 +1,2 @@
+gym-super-mario-bros >= 7.3.2
+gym-tetris >= 3.0.2
