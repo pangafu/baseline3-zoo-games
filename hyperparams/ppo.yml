@@ -1,4 +1,4 @@
-Mario:
+BZ-Mario-v0: &BZ-Mario-v0
   policy: 'CnnPolicy'
   frame_stack: 4
   n_envs: 8
@@ -23,7 +23,19 @@ Mario:
                        net_arch=[dict(pi=[512, 1024, 1024, 512], vf=[512, 1024, 1024, 512])]
                        )"
 
-Tetris:
+BZ-Mario-1-1-v0:
+  <<: *BZ-Mario-v0
+
+BZ-Mario-1-2-v0:
+  <<: *BZ-Mario-v0
+
+BZ-Mario-1-3-v0:
+  <<: *BZ-Mario-v0
+
+BZ-Mario-1-4-v0:
+  <<: *BZ-Mario-v0
+
+BZ-Tetris-v0:
   policy: 'CnnPolicy'
   frame_stack: 4
   n_envs: 16
