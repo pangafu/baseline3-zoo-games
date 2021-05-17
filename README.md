@@ -54,3 +54,15 @@ use baseline3-zoo train games like super mario tetris etc....
 | BZ-Mario-8-3-v0  | test |  test |
 | BZ-Mario-8-4-v0  | test |  test |
 | BZ-Tetris-v0  | test |  test |
+
+
+# Example
+
+## BZ-Mario-1-1-v0
+todo
+
+## BZ-Mario-1-2-v0
+todo
+
+# Pretrained model
+todo
