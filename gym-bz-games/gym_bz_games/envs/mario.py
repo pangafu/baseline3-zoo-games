@@ -96,8 +96,8 @@ class Mario(gym.Env):
     metadata = {'render.modes':['human']}
 
     def __init__(self, world = 1, stage = 1):
-    	  self.world = 1
-    	  self.stage = 1
+        self.world = 1
+        self.stage = 1
         env = gym_super_mario_bros.make("SuperMarioBros-{}-{}-v0".format(self.world, self.stage))
         env = JoypadSpace(env, COMPLEX_MOVEMENT)
         env = CustomReward(env)
