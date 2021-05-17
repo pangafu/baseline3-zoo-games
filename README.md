@@ -66,3 +66,15 @@ todo
 
 # Pretrained model
 todo
+
+# Citing the Project
+To cite this repository in publications:
+
+@misc{baseline3-zoo-games,
+  author = {YuanQuan},
+  title = {RL Baselines3 Zoo Games},
+  year = {2021},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/pangafu/baseline3-zoo-games}},
+}
