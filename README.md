@@ -1,4 +1,4 @@
-# baseline3-zoo-games
+# Concept
 Use [Baseline3 Zoo framework](https://github.com/DLR-RM/rl-baselines3-zoo) train games like Super Mario Bro.,  Tetris etc....
 
 
