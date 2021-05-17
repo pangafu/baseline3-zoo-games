@@ -1,5 +1,5 @@
 # baseline3-zoo-games
-use baseline3-zoo train games like super mario tetris etc....
+Use [Baseline3 Zoo framework](https://github.com/DLR-RM/rl-baselines3-zoo) train games like Super Mario Bro.,  Tetris etc....
 
 
 # Install
