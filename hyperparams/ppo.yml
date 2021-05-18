@@ -20,7 +20,7 @@ BZ-Mario-v0: &BZ-Mario-v0
   policy_kwargs: "dict(log_std_init=-2,
                        ortho_init=False,
                        activation_fn=nn.ReLU,
-                       net_arch=[dict(pi=[512, 1024, 1024, 512], vf=[512, 1024, 1024, 512])]
+                       net_arch=[dict(pi=[512, 512, 512, 512], vf=[512, 512, 512, 512])]
                        )"
 
 BZ-Tetris-v0:
@@ -38,7 +38,7 @@ BZ-Tetris-v0:
   policy_kwargs: "dict(log_std_init=-2,
                        ortho_init=False,
                        activation_fn=nn.ReLU,
-                       net_arch=[dict(pi=[512, 1024, 1024, 512], vf=[512, 1024, 1024, 512])]
+                       net_arch=[dict(pi=[512, 512, 512, 512], vf=[512, 512, 512, 512])]
                        )"
 
 
