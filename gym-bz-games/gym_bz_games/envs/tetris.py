@@ -4,7 +4,7 @@ import cv2
 from gym import spaces
 from nes_py.wrappers import JoypadSpace
 from stable_baselines3.common.type_aliases import GymObs, GymStepReturn
-from gym_bz_games.wrappers import CustomSkipFrame, NesFrameGray, NesFrameGrayHalf, NesFrameGrayCrop, RandomStart, NesFrameBinary, NesFrameGrayScale
+from gym_bz_games.wrappers import CustomSkipFrame, NesFrameGray, NesFrameGrayHalf, NesFrameGrayCrop, RandomStart, NesFrameBinary, NesFrameGrayScale, RecorderVideo
 from gym_tetris.actions import MOVEMENT
 import gym_tetris
 
@@ -92,8 +92,11 @@ class CustomReward(gym.Wrapper):
         if self.curr_board - self.curr_lines - self.curr_totaluse/5. > 8:
             done = True
 
+        if self.curr_board > 15:
+            done = True
+
         if done:
-            reward -= max(20 - self.curr_lines - self.curr_totaluse/5, 0)
+            reward -= max(15 - self.curr_lines - self.curr_totaluse/5, 0)
 
         self.curr_reward_sum += reward
 
@@ -120,21 +123,40 @@ class CustomReward(gym.Wrapper):
         return self.env.reset(**kwargs)
 
 
+    def process_frame(self, frame):
+        
+        
+        return frame
+
 
 class Tetris(gym.Env):
     metadata = {'render.modes':['human']}
 
     def __init__(self):
         env = create_env()
+        
+        need_record = False
+
+        bz_record = os.environ.get('BZ_RECORD')
+        bz_record_algo = os.environ.get('BZ_RECORD_ALGO')
+
+        if bz_record and bz_record == "1":
+            need_record = True
+
+
         env = TetrisEnvReload(env, reload_resettime=10)
-        env = CustomReward(env)
-        env = CustomSkipFrame(env, skip = 12)
+        env = CustomSkipFrame(env, skip = 8)
+
+        if need_record:
+            env = RecorderVideo(env, saved_path=os.path.join("videoes", bz_record_algo, "SuperMarioBros-{}-{}-v0.gif".format(self.world, self.stage)))
+
         env = NesFrameGrayHalf(env)
         env = NesFrameGrayCrop(env)
         env = NesFrameGrayScale(env, scale=0.25)
         env = NesFrameBinary(env)
         env = RandomStart(env, rnum = 2)
 
+        env = CustomReward(env)
 
         self.env = env
         self.action_space = env.action_space
