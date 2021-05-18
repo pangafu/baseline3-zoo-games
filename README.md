@@ -11,6 +11,10 @@ Use [Baseline3 Zoo framework](https://github.com/DLR-RM/rl-baselines3-zoo) train
     git clone https://github.com/pangafu/baseline3-zoo-games.git
     cd baseline3-zoo-games/
     ./install.sh
+
+# Download Trained models and videoes
+
+    git submodule update --init
     
 # Train
     ./script/train.mario.sh

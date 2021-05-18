@@ -6,4 +6,3 @@ cd ../gym-bz-games
 pip install -e .
 
 cd ..
-

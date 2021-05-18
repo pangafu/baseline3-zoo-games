@@ -35,6 +35,11 @@ class RecorderVideo(gym.Wrapper):
             if os.path.exists(self.saved_path):
                 os.remove(self.saved_path)
 
+            (save_path_dir,save_path_file) = os.path.split(self.saved_path)
+
+            if  not os.path.exists(save_path_dir):
+                os.makedirs(save_path_dir)
+
             self.record_video[0].save(self.saved_path, save_all=True, append_images=self.record_video[1:], optimize=True, duration=20, loop=0)
 
         elif not self.has_recorded:
