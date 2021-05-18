@@ -24,7 +24,7 @@ BZ-Mario-v0: &BZ-Mario-v0
                        )"
 
 BZ-Tetris-v0:
-  policy: 'CnnPolicy'
+  policy: 'MlpPolicy'
   frame_stack: 4
   n_envs: 16
   n_steps: 512
