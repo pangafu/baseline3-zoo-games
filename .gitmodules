@@ -1,9 +1,3 @@
 [submodule "baselines3-zoo"]
 	path = baselines3-zoo
 	url = https://github.com/pangafu/rl-baselines3-zoo.git
-[submodule "videoes"]
-	path = videoes
-	url = https://github.com/pangafu/baseline3-zoo-games-videoes.git
-[submodule "logs"]
-	path = logs
-	url = https://github.com/pangafu/baseline3-zoo-games-logs.git
