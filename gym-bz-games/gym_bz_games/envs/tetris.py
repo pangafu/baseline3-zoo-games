@@ -28,7 +28,7 @@ class TetrisEnvReload(gym.Wrapper):
         self.reset_time += 1
 
         if self.reset_time > self.reload_resettime:
-            print("Reload gym-tetris env for {} times to prevent glitch".format(self.reload_resettime))
+            #print("Reload gym-tetris env for {} times to prevent glitch".format(self.reload_resettime))
             self.env.close()
             self.env = create_env()
             self.reset_time = 0
@@ -49,6 +49,8 @@ class CustomReward(gym.Wrapper):
         self.curr_step_num = 0
         self.ingore_use_reward = False
 
+        self.curr_just_reset = True
+
         self.shape_height = self.observation_space.shape[0]
         self.shape_width = self.observation_space.shape[1]
         self.stack_grid = np.zeros((self.shape_height,self.shape_width))
@@ -66,24 +68,29 @@ class CustomReward(gym.Wrapper):
         state = self.process_frame(state)
 
         reward = 0.
+
+        if self.curr_just_reset:
+            reward += 2000.
+            self.curr_just_reset = False
+
         #reward += (info["score"] - self.curr_score)/20.
         self.curr_score = info["score"]
 
-        reward += (info["number_of_lines"] - self.curr_lines) * 10.
+        reward += (info["number_of_lines"] - self.curr_lines) * 200.
         self.curr_lines = info["number_of_lines"]
 
-        if info["board_height"] > self.curr_board and self.curr_totaluse>=2:
-            self.ingore_use_reward = True
+        #if info["board_height"] > self.curr_board and self.curr_totaluse>=2:
+        #    self.ingore_use_reward = True
 
-        if self.info_dead_holes > self.curr_dead_holes:
-            self.ingore_use_reward = True
+        #if self.info_dead_holes > self.curr_dead_holes:
+        #    self.ingore_use_reward = True
 
-        if self.info_half_holes > self.curr_half_holes:
-            self.ingore_use_reward = True
+        #if self.info_half_holes > self.curr_half_holes:
+        #    self.ingore_use_reward = True
 
 
-        if info["board_height"] > 6 or  info["board_height"] < self.curr_board:
-            reward -= 6. * (info["board_height"] - self.curr_board)
+        if info["board_height"] > 4 or  info["board_height"] < self.curr_board:
+            reward -= 80. * (info["board_height"] - self.curr_board)
 
         self.curr_board = info["board_height"]
 
@@ -125,7 +132,7 @@ class CustomReward(gym.Wrapper):
             done = True
 
         if done:
-            reward -= max(15 - self.curr_lines - self.curr_totaluse/5, 0)
+            reward -= max(50, 1000 - self.curr_lines*100 - self.curr_totaluse*10)
 
         self.curr_reward_sum += reward
 
@@ -148,6 +155,7 @@ class CustomReward(gym.Wrapper):
         self.curr_reward_sum = 0
         self.curr_step_num = 0
         self.ingore_use_reward = False
+        self.curr_just_reset = True
 
         self.stack_grid = np.zeros((self.shape_height,self.shape_width))
         self.upper_grid = np.zeros((self.shape_height,self.shape_width))
