@@ -1,10 +1,11 @@
 # Concept
-Use [Baseline3 Zoo framework](https://github.com/DLR-RM/rl-baselines3-zoo) train games like Super Mario Bro.,  Tetris etc....
+Use [Baseline3 Zoo framework](https://github.com/DLR-RM/rl-baselines3-zoo) train games like Super Mario Bros.,  Tetris etc....
 
 # Example
 
-## PPO
-![SuperMarioBros-1-1](https://github.com/pangafu/baseline3-zoo-games/raw/main/videoes/ppo/SuperMarioBros-1-1-v0.gif)
+## PPO - Super Mario Bros.
+![ppo_SuperMarioBros-1-1](https://github.com/pangafu/baseline3-zoo-games/raw/main/videoes/ppo/SuperMarioBros-1-1-v0.gif)
+
 
 # Install
     git clone https://github.com/pangafu/baseline3-zoo-games.git
@@ -25,7 +26,7 @@ Use [Baseline3 Zoo framework](https://github.com/DLR-RM/rl-baselines3-zoo) train
 # Result
 |  Game            | PPO  | QRDQN |
 | ---------------  | ---- |  ---- | 
-| BZ-Mario-1-1-v0  | ok   |  test |
+| BZ-Mario-1-1-v0  | ok  [model](https://github.com/DLR-RM/rl-baselines3-zoo) |  test |
 | BZ-Mario-1-2-v0  | test |  test |
 | BZ-Mario-1-3-v0  | test |  test |
 | BZ-Mario-1-4-v0  | test |  test |
