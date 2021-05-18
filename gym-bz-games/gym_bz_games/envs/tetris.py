@@ -24,15 +24,15 @@ class TetrisEnvReload(gym.Wrapper):
 
     def reset(self):
         self.reset_time += 1
-        
+
         if self.reset_time > self.reload_resettime:
-            print("Reload gym-tetris env for {} times to prevent picture chaos".format(, self.reload_resettime))
+            print("Reload gym-tetris env for {} times to prevent picture chaos".format(self.reload_resettime))
             self.env.close()
             self.env = create_env()
             self.reset_time = 0
-            
+
         return self.env.reset()
-            
+
 
 class CustomReward(gym.Wrapper):
     def __init__(self, env: gym.Env):

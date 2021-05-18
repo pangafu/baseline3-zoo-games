@@ -1,3 +1,4 @@
+import os
 import gym
 import numpy as np
 import cv2
@@ -5,7 +6,8 @@ from gym import spaces
 from stable_baselines3.common.type_aliases import GymObs, GymStepReturn
 from gym.spaces import Box
 import random
-import subprocess as sp
+from PIL import Image, ImageDraw
+
 
 
 class RecorderVideo(gym.Wrapper):
@@ -17,14 +19,9 @@ class RecorderVideo(gym.Wrapper):
         self.record_height = self.observation_space.shape[0]
         self.record_width = self.observation_space.shape[1]
         self.saved_path = saved_path
-        
 
-        self.command = ["ffmpeg", "-y", "-f", "rawvideo", "-vcodec", "rawvideo", "-s", "{}X{}".format(self.record_width, self.record_height),
-                        "-pix_fmt", "rgb24", "-r", "60", "-i", "-", "-an", "-vcodec", "mpeg4", saved_path]
-        try:
-            self.pipe = sp.Popen(self.command, stdin=sp.PIPE, stderr=sp.PIPE)
-        except FileNotFoundError:
-            pass
+        self.record_video = []
+
 
     def step(self, action) -> GymStepReturn:
         state, reward, done, info = self.env.step(action)
@@ -34,22 +31,25 @@ class RecorderVideo(gym.Wrapper):
         if not self.has_recorded and self.record_length > self.min_record_length:
             self.has_recorded = True
             print("Recoard video to {}, total frame is {}".format(self.saved_path, self.record_length))
-            try:
-                self.pipe.terminate()        
-            except:
-                pass
+
+            if os.path.exists(self.saved_path):
+                os.remove(self.saved_path)
+
+            self.record_video[0].save(self.saved_path, save_all=True, append_images=self.record_video[1:], optimize=True, duration=20, loop=0)
+
         elif not self.has_recorded:
             self.record_length = 0
             print("Recoard frame is {} (< {}), continue recording!".format(self.record_length, self.min_record_length))
-        
-        return self.process_frame(self.env.reset())
-        
-        
+
+        return self.record(self.env.reset())
+
+
     def record(self, image_array):
-        if not self.has_recorded: 
-            self.pipe.stdin.write(image_array.tostring())
+        if not self.has_recorded:
+            img = Image.fromarray(image_array, 'RGB')
+            self.record_video.append(img)
             self.record_length += 1
-        
+
         return image_array
 
 

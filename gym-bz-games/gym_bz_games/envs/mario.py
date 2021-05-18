@@ -59,7 +59,7 @@ class CustomReward(gym.Wrapper):
             self.curr_x_max_frame = self.curr_frame
 
 
-        if self.curr_frame - self.curr_x_max_frame > 3000:
+        if self.curr_frame - self.curr_x_max_frame > 800:
             done = True
 
 
@@ -101,26 +101,28 @@ class Mario(gym.Env):
     def __init__(self, world = 1, stage = 1):
         self.world = world
         self.stage = stage
-        
+
         need_record = False
+
         bz_record = os.environ.get('BZ_RECORD')
-        if bz_record and bz_record == 1:
+        if bz_record and bz_record == "1":
             need_record = True
-        
+
         env = gym_super_mario_bros.make("SuperMarioBros-{}-{}-v0".format(self.world, self.stage))
         env = JoypadSpace(env, COMPLEX_MOVEMENT)
-        
-        if need_record:
-            env = RecorderVideo(env, saved_path="videoes/")
-        
+
         env = CustomSkipFrame(env, skip = 2)
+
+        if need_record:
+            env = RecorderVideo(env, saved_path=os.path.join("videoes", "SuperMarioBros-{}-{}-v0.gif".format(self.world, self.stage)))
+
         env = NesFrameGrayHalf(env)
-        
-        if not need_record:
-            env = RandomStart(env, rnum = 5)
-        
+
+        #if not need_record:
+        env = RandomStart(env, rnum = 5)
+
         env = CustomReward(env, self.world, self.stage)
-        
+
 
 
         self.env = env
