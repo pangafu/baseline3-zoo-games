@@ -9,6 +9,31 @@ from gym_tetris.actions import MOVEMENT
 import gym_tetris
 
 
+
+def create_env(self):
+    env = gym_tetris.make("TetrisA-v0")
+    env = JoypadSpace(env, MOVEMENT)
+    return env
+
+# Reload gym-tetris env for 10 times.(prevent picture chaos)
+class TetrisEnvReload(gym.Wrapper):
+    def __init__(self, env, reload_resettime=10):
+        super(TetrisReload, self).__init__(env)
+        self.reload_resettime = reload_resettime
+        self.reset_time = 0
+
+    def reset(self):
+        self.reset_time += 1
+        
+        if self.reset_time > self.reload_resettime:
+            print("Reload gym-tetris env for {} times to prevent picture chaos".format(, self.reload_resettime))
+            self.env.close()
+            self.env = create_env()
+            self.reset_time = 0
+            
+        return self.env.reset()
+            
+
 class CustomReward(gym.Wrapper):
     def __init__(self, env: gym.Env):
         gym.Wrapper.__init__(self, env)
@@ -21,7 +46,6 @@ class CustomReward(gym.Wrapper):
         self.curr_totaluse = 0
         self.curr_reward_sum = 0
         self.curr_step_num = 0
-        self.reset_time = 0
         self.ingore_use_reward = False
 
     def step(self, action: int) -> GymStepReturn:
@@ -91,23 +115,9 @@ class CustomReward(gym.Wrapper):
         self.curr_totaluse = 0
         self.curr_reward_sum = 0
         self.curr_step_num = 0
-        self.reset_time += 1
         self.ingore_use_reward = False
 
-        if self.reset_time > 9:
-            print("Reload ENV for 10 times. Max Reward:{}".format(self.max_reward))
-            self.create_env()
-            self.reset_time = 0
-
-
         return self.env.reset(**kwargs)
-
-
-    def create_env(self):
-        env_temp = gym_tetris.make("Tetris{}-v{}".format("A", "0"))
-
-        self.env.close()
-        self.env = JoypadSpace(env_temp, MOVEMENT)
 
 
 
@@ -115,13 +125,13 @@ class Tetris(gym.Env):
     metadata = {'render.modes':['human']}
 
     def __init__(self):
-        env = gym_tetris.make("TetrisA-v0")
-        env = JoypadSpace(env, MOVEMENT)
+        env = create_env()
+        env = TetrisEnvReload(env, reload_resettime=10)
         env = CustomReward(env)
         env = CustomSkipFrame(env, skip = 12)
         env = NesFrameGrayHalf(env)
         env = NesFrameGrayCrop(env)
-        #env = NesFrameGrayScale(env, scale=0.25)
+        env = NesFrameGrayScale(env, scale=0.25)
         env = NesFrameBinary(env)
         env = RandomStart(env, rnum = 2)
 

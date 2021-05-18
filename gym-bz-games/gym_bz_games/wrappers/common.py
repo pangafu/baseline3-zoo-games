@@ -5,6 +5,53 @@ from gym import spaces
 from stable_baselines3.common.type_aliases import GymObs, GymStepReturn
 from gym.spaces import Box
 import random
+import subprocess as sp
+
+
+class RecorderVideo(gym.Wrapper):
+    def __init__(self, env, saved_path, min_record_length = 20):
+        super(RecorderVideo, self).__init__(env)
+        self.has_recorded = False
+        self.record_length = 0
+        self.min_record_length = min_record_length
+        self.record_height = self.observation_space.shape[0]
+        self.record_width = self.observation_space.shape[1]
+        self.saved_path = saved_path
+        
+
+        self.command = ["ffmpeg", "-y", "-f", "rawvideo", "-vcodec", "rawvideo", "-s", "{}X{}".format(self.record_width, self.record_height),
+                        "-pix_fmt", "rgb24", "-r", "60", "-i", "-", "-an", "-vcodec", "mpeg4", saved_path]
+        try:
+            self.pipe = sp.Popen(self.command, stdin=sp.PIPE, stderr=sp.PIPE)
+        except FileNotFoundError:
+            pass
+
+    def step(self, action) -> GymStepReturn:
+        state, reward, done, info = self.env.step(action)
+        return self.record(state), reward, done, info
+
+    def reset(self):
+        if not self.has_recorded and self.record_length > self.min_record_length:
+            self.has_recorded = True
+            print("Recoard video to {}, total frame is {}".format(self.saved_path, self.record_length))
+            try:
+                self.pipe.terminate()        
+            except:
+                pass
+        elif not self.has_recorded:
+            self.record_length = 0
+            print("Recoard frame is {} (< {}), continue recording!".format(self.record_length, self.min_record_length))
+        
+        return self.process_frame(self.env.reset())
+        
+        
+    def record(self, image_array):
+        if not self.has_recorded: 
+            self.pipe.stdin.write(image_array.tostring())
+            self.record_length += 1
+        
+        return image_array
+
 
 class CustomSkipFrame(gym.Wrapper):
     def __init__(self, env, skip=4):

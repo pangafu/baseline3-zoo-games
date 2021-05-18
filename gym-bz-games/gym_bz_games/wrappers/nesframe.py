@@ -78,6 +78,9 @@ class NesFrameBinary(gym.Wrapper):
     def __init__(self, env, binline = 5):
         super(NesFrameBinary, self).__init__(env)
         self.binline = binline
+        self.newheight = self.observation_space.shape[0]
+        self.newwidth = self.observation_space.shape[1]
+        self.observation_space = Box(low=0, high=1, shape=(self.newheight, self.newwidth, 1), dtype=np.uint8)
 
     def step(self, action) -> GymStepReturn:
         state, reward, done, info = self.env.step(action)
@@ -89,10 +92,9 @@ class NesFrameBinary(gym.Wrapper):
     def process_frame(self, frame):
         if frame is not None:
             frame = (frame > self.binline).astype(np.uint8)
-            frame[frame == 1] = 255
             return frame
-            
-        return frame
+        else:
+            return np.zeros((self.newheight, self.newwidth, 1))
 
 class NesFrameGrayScale(gym.Wrapper):
     def __init__(self, env, scale=0.5):

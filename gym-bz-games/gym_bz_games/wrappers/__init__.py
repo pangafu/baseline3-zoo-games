@@ -2,6 +2,7 @@
 from .common import (
     CustomSkipFrame,
     RandomStart,
+    RecorderVideo
 )
 
 from .nesframe import (

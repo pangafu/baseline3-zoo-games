@@ -1,3 +1,4 @@
+import os
 import gym
 import numpy as np
 import cv2
@@ -5,7 +6,7 @@ from gym import spaces
 from nes_py.wrappers import JoypadSpace
 from gym_super_mario_bros.actions import COMPLEX_MOVEMENT
 from stable_baselines3.common.type_aliases import GymObs, GymStepReturn
-from gym_bz_games.wrappers import CustomSkipFrame, NesFrameGray, NesFrameGrayHalf, RandomStart
+from gym_bz_games.wrappers import CustomSkipFrame, NesFrameGray, NesFrameGrayHalf, RandomStart, RecorderVideo
 import gym_super_mario_bros
 
 
@@ -100,12 +101,26 @@ class Mario(gym.Env):
     def __init__(self, world = 1, stage = 1):
         self.world = world
         self.stage = stage
+        
+        need_record = False
+        bz_record = os.environ.get('BZ_RECORD')
+        if bz_record and bz_record == 1:
+            need_record = True
+        
         env = gym_super_mario_bros.make("SuperMarioBros-{}-{}-v0".format(self.world, self.stage))
         env = JoypadSpace(env, COMPLEX_MOVEMENT)
+        
+        if need_record:
+            env = RecorderVideo(env, saved_path="videoes/")
+        
         env = CustomSkipFrame(env, skip = 2)
         env = NesFrameGrayHalf(env)
-        env = RandomStart(env, rnum = 5)
+        
+        if not need_record:
+            env = RandomStart(env, rnum = 5)
+        
         env = CustomReward(env, self.world, self.stage)
+        
 
 
         self.env = env

@@ -12,5 +12,14 @@ else
   echo "env is $2"
 fi 
 
+if [ ! $3 ]; then
+   echo "start a new training!"
+else
+   echo "training from file $3"
+fi
 
-python baselines3-zoo/train.py --algo $1 --env $2 --save-freq 20480 --eval-freq 20480 --eval-episodes=2 --vec-env=subproc --num-threads=8
+if [ ! $3 ]; then
+  python baselines3-zoo/train.py --algo $1 --env $2 --save-freq 20480 --eval-freq 20480 --eval-episodes=2 --vec-env=subproc --num-threads=8
+else
+  python baselines3-zoo/train.py --algo $1 --env $2 --trained-agent $3 --save-freq 20480 --eval-freq 20480 --eval-episodes=2 --vec-env=subproc --num-threads=8
+fi
