@@ -4,3 +4,6 @@
 [submodule "videoes"]
 	path = videoes
 	url = https://github.com/pangafu/baseline3-zoo-games-videoes.git
+[submodule "logs"]
+	path = logs
+	url = https://github.com/pangafu/baseline3-zoo-games-logs.git
