@@ -1,5 +1,5 @@
-# baseline3-zoo-games
-use baseline3-zoo train games like super mario tetris etc....
+# Concept
+Use [Baseline3 Zoo framework](https://github.com/DLR-RM/rl-baselines3-zoo) train games like Super Mario Bro.,  Tetris etc....
 
 
 # Install
@@ -66,3 +66,15 @@ todo
 
 # Pretrained model
 todo
+
+# Citing the Project
+To cite this repository in publications:
+
+@misc{baseline3-zoo-games,
+  author = {YuanQuan},
+  title = {RL Baselines3 Zoo Games},
+  year = {2021},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/pangafu/baseline3-zoo-games}},
+}
