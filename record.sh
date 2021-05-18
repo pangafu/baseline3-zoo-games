@@ -17,9 +17,11 @@ echo ">>>> RECORDING BEST BEGIN + "
 echo ""
 
 export BZ_RECORD=1
+export BZ_RECORD_ALGO=ppo
 
 python baselines3-zoo/enjoy.py --algo $1 --env $2 --folder logs/ --num-threads 1 --n-envs 1 -n 2000 --load-checkpoint-last
 
+unset BZ_RECORD_ALGO
 unset BZ_RECORD
 
 echo ""

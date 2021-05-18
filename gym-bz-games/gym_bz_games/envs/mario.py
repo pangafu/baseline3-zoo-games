@@ -105,8 +105,11 @@ class Mario(gym.Env):
         need_record = False
 
         bz_record = os.environ.get('BZ_RECORD')
+        bz_record_algo = os.environ.get('BZ_RECORD_ALGO')
+
         if bz_record and bz_record == "1":
             need_record = True
+
 
         env = gym_super_mario_bros.make("SuperMarioBros-{}-{}-v0".format(self.world, self.stage))
         env = JoypadSpace(env, COMPLEX_MOVEMENT)
@@ -114,7 +117,7 @@ class Mario(gym.Env):
         env = CustomSkipFrame(env, skip = 2)
 
         if need_record:
-            env = RecorderVideo(env, saved_path=os.path.join("videoes", "SuperMarioBros-{}-{}-v0.gif".format(self.world, self.stage)))
+            env = RecorderVideo(env, saved_path=os.path.join("videoes", bz_record_algo, "SuperMarioBros-{}-{}-v0.gif".format(self.world, self.stage)))
 
         env = NesFrameGrayHalf(env)
 
