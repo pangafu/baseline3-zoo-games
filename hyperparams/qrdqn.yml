@@ -21,7 +21,7 @@ BZ-Mario-v0: &BZ-Mario-v0
   exploration_fraction: 0.2
   exploration_final_eps: 0.07
   optimize_memory_usage: True
-  policy_kwargs: "dict(net_arch=[512, 1024, 1024, 512], n_quantiles=150)"
+  policy_kwargs: "dict(net_arch=[256, 512, 512, 256], n_quantiles=150)"
 
 BZ-Tetris-v0:
   policy: 'CnnPolicy'
@@ -39,7 +39,7 @@ BZ-Tetris-v0:
   exploration_fraction: 0.2
   exploration_final_eps: 0.07
   optimize_memory_usage: True
-  policy_kwargs: "dict(net_arch=[512, 1024, 1024, 512], n_quantiles=150)"
+  policy_kwargs: "dict(net_arch=[256, 512, 512, 256], n_quantiles=150)"
 
 
 
