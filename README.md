@@ -2,7 +2,7 @@
 Use [Baseline3 Zoo framework](https://github.com/DLR-RM/rl-baselines3-zoo) train games like Super Mario Bros.,  Tetris etc....
 
 # Example
-all videos put in
+All videos put in
 https://github.com/pangafu/baseline3-zoo-games-videoes
 
 ## PPO - Super Mario Bros.
@@ -10,7 +10,7 @@ https://github.com/pangafu/baseline3-zoo-games-videoes
 
 
 # models
-all modeles put in
+All modeles put in
 https://github.com/pangafu/baseline3-zoo-games-logs
 
 # Install
@@ -20,7 +20,8 @@ https://github.com/pangafu/baseline3-zoo-games-logs
 
 # Download Trained models and videoes
 
-    git submodule update --init
+    git clone https://github.com/pangafu/baseline3-zoo-games-videoes.git
+    git clone https://github.com/pangafu/baseline3-zoo-games-logs.git
     
 # Train
     ./script/train.mario.sh
