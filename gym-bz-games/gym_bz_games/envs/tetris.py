@@ -187,7 +187,7 @@ class CustomReward(gym.Wrapper):
 
                 for j in range(self.shape_width):
                     if detect_control_obj:
-                        if mask_frame[i, i] == 1:
+                        if mask_frame[i, j] == 1:
                             self.stack_grid[i, j] = 1    # clean
                         else:
                             self.stack_grid[i, j] = 1
