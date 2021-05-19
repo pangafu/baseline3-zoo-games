@@ -1,28 +1,18 @@
-BZ-Mario-bak-v0: &BZ-Mario-bak-v0
+BZ-Mario-v0: &BZ-Mario-v0
   policy: 'CnnPolicy'
   frame_stack: 4
   n_envs: 8
   n_steps: 512
-  n_epochs: 4
-  batch_size: 512
-  n_timesteps: !!float 1e9
-  vf_coef: 0.5
-  gamma: 0.99
-  gae_lambda: 0.9
-  ent_coef: 0.0
-  sde_sample_freq: 4
-  max_grad_norm: 0.5
-  vf_coef: 0.5
-  learning_rate: !!float 3e-5
-  clip_range: 0.4
-  normalize: true
-  policy_kwargs: "dict(log_std_init=-2,
-                       ortho_init=False,
-                       activation_fn=nn.ReLU,
-                       net_arch=[dict(pi=[256, 512, 512, 256], vf=[256, 512, 512, 256])]
-                       )"
 
-BZ-Mario-v0: &BZ-Mario-v0
+BZ-Tetris-v0:
+  policy: 'MlpPolicy'
+  frame_stack: 4
+  n_envs: 16
+  n_steps: 512
+
+
+
+BZ-Mario-bak-v0: &BZ-Mario-bak-v0
   policy: 'CnnPolicy'
   frame_stack: 4
   n_envs: 8
@@ -42,7 +32,7 @@ BZ-Mario-v0: &BZ-Mario-v0
                        )"
 
 
-BZ-Tetris-v0:
+BZ-Tetris-bak-v0:
   policy: 'MlpPolicy'
   frame_stack: 4
   n_envs: 16
