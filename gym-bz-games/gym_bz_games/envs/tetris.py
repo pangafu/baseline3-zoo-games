@@ -47,9 +47,6 @@ class CustomReward(gym.Wrapper):
         self.curr_totaluse = 0
         self.curr_reward_sum = 0
         self.curr_step_num = 0
-        self.ingore_use_reward = False
-
-        self.curr_just_reset = True
 
         self.shape_height = self.observation_space.shape[0]
         self.shape_width = self.observation_space.shape[1]
@@ -58,8 +55,13 @@ class CustomReward(gym.Wrapper):
 
         self.curr_dead_holes = 0
         self.curr_half_holes = 0
+        self.curr_line_blank = 0
+        self.curr_grid_score = 0
+
         self.info_dead_holes = 0
         self.info_half_holes = 0
+        self.info_line_blank = 0
+        self.info_grid_score = 0
 
         self.observation_space = Box(low=0, high=5, shape=(2, self.shape_height, self.shape_width), dtype=np.uint8)
 
@@ -69,79 +71,46 @@ class CustomReward(gym.Wrapper):
 
         reward = 0.
 
-        if self.curr_just_reset:
-            reward += 2000.
-            self.curr_just_reset = False
-
         #reward += (info["score"] - self.curr_score)/20.
         self.curr_score = info["score"]
 
-        reward += (info["number_of_lines"] - self.curr_lines) * 200.
-        self.curr_lines = info["number_of_lines"]
-
-        #if info["board_height"] > self.curr_board and self.curr_totaluse>=2:
-        #    self.ingore_use_reward = True
-
-        #if self.info_dead_holes > self.curr_dead_holes:
-        #    self.ingore_use_reward = True
-
-        #if self.info_half_holes > self.curr_half_holes:
-        #    self.ingore_use_reward = True
-
-
-        if info["board_height"] > 4 or  info["board_height"] < self.curr_board:
-            reward -= 80. * (info["board_height"] - self.curr_board)
-
         self.curr_board = info["board_height"]
-
-
-        reward -= 4. * (self.info_dead_holes > self.curr_dead_holes)
-        self.curr_dead_holes = self.info_dead_holes
-
-        reward -= 2. * (self.info_half_holes > self.curr_half_holes)
-        self.curr_half_holes = self.info_half_holes
-
 
         totaluse = 0
         for value in info["statistics"].values():
             totaluse += value
 
-        self.curr_step_num += 1
-        #if self.curr_step_num % 80 == 1:
-        #    reward -= 1
-
-
-        if self.curr_board <= 20:
-            if totaluse > self.curr_totaluse:
-                 if self.ingore_use_reward:
-                     reward -= 1
-                     self.ingore_use_reward = False
-                 else:
-                     reward += 3
-
         self.curr_totaluse = totaluse
 
+        self.curr_step_num += 1
 
-        #if reward < -1*self.curr_reward_sum:
-        #    reward = -1*self.curr_reward_sum
+        self.curr_dead_holes = self.info_dead_holes
+        self.curr_half_holes = self.info_half_holes
+        self.curr_line_blank = self.info_line_blank
 
-        if self.curr_board - self.curr_lines - self.curr_totaluse/5. > 9:
-            done = True
 
-        if self.curr_board > 15:
+        reward += self.info_grid_score - self.curr_grid_score
+        self.curr_grid_score = self.info_grid_score
+
+
+        if self.curr_board >= 15:
             done = True
 
         if done:
-            reward -= max(50, 1000 - self.curr_lines*100 - self.curr_totaluse*10)
+            reward -= self.curr_half_holes*2 + self.curr_line_blank*3
 
+        if info["number_of_lines"] != self.curr_lines:
+            reward += pow((info["number_of_lines"] - self.curr_lines), 1.5) * 40.
+            self.curr_lines = info["number_of_lines"]
+            print(">> CLEAR LINE : reward:{} score:{} lines:{} board:{} blank:{} half:{} holes:{} total:{}".format(self.max_reward, self.curr_score,self.curr_lines, self.curr_board, self.curr_line_blank, self.curr_half_holes, self.curr_dead_holes, self.curr_totaluse))
+
+
+        # reward sum
         self.curr_reward_sum += reward
-
-        #if reward != 0:
-        #    print(reward)
 
         if self.curr_reward_sum > self.max_reward:
             self.max_reward = self.curr_reward_sum
-            print(">> MAX REWARD : reward:{}  score:{}  lines:{}  board:{}  holes:{}  half:{}  totaluse:{}".format(self.max_reward, self.curr_score,self.curr_lines, self.curr_board, self.curr_dead_holes, self.curr_half_holes, self.curr_totaluse))
+            print(">> MAX REWARD : reward:{} score:{} lines:{} board:{} blank:{} half:{} holes:{} total:{}".format(self.max_reward, self.curr_score,self.curr_lines, self.curr_board, self.curr_line_blank, self.curr_half_holes, self.curr_dead_holes, self.curr_totaluse))
 
 
         return state, reward, done, info
@@ -154,15 +123,19 @@ class CustomReward(gym.Wrapper):
         self.curr_totaluse = 0
         self.curr_reward_sum = 0
         self.curr_step_num = 0
-        self.ingore_use_reward = False
-        self.curr_just_reset = True
 
         self.stack_grid = np.zeros((self.shape_height,self.shape_width))
         self.upper_grid = np.zeros((self.shape_height,self.shape_width))
+
         self.curr_dead_holes = 0
         self.curr_half_holes = 0
+        self.curr_line_blank = 0
+        self.curr_grid_score = 0
+
         self.info_dead_holes = 0
         self.info_half_holes = 0
+        self.info_line_blank = 0
+        self.info_grid_score = 0
 
 
         self.env.reset(**kwargs)
@@ -268,23 +241,58 @@ class CustomReward(gym.Wrapper):
 
         dead_holes = 0
         half_holes = 0
+        line_blank = 0
+        grid_score = 0
 
-        for j in range(self.shape_width):
-            for i in range(self.shape_height):
-                if self.upper_grid[i, j] == 1:
-                    self.upper_grid[i, j] = 0              # clean 0
+        #origin:     blank 1, line_blank 1, half_hole 3, blocked 5, dead_hole 4, control 2
+        #modify to:  blank 0, line_blank 1, half_hole 2, blocked 3, dead_hole 4, control 5
+        for i in range(self.shape_height):
+            has_block = False
+            for j in range(self.shape_width):
+                if self.upper_grid[i, j] == 5:
+                    has_block = True
+                    break
 
-                if self.upper_grid[i, j] == 4:
-                    dead_holes += 1
 
-                if self.upper_grid[i, j] == 3:
+            for j in range(self.shape_width):
+                # upper grid
+                if self.upper_grid[i, j] == 1:             # ori blank 1
+                    if has_block:
+                        line_blank += 1
+                        self.upper_grid[i, j] = 1          # line blank 1
+                        grid_score -= 1
+                    else:
+                        self.upper_grid[i, j] = 0          # blank 0
+
+
+                elif self.upper_grid[i, j] == 2:           # ori control 2
+                    self.upper_grid[i, j] = 5              # control 5
+
+
+                elif self.upper_grid[i, j] == 3:           # ori half_hole 3
                     half_holes += 1
+                    self.upper_grid[i, j] = 2              # half_hole 2
+                    grid_score -= 2
 
+
+                elif self.upper_grid[i, j] == 4:           # ori dead_hole 4
+                    dead_holes += 1
+                    self.upper_grid[i, j] = 4              # dead_hole 4
+                    grid_score -= 4
+
+                elif self.upper_grid[i, j] == 5:           # ori blocked 5
+                    self.upper_grid[i, j] = 3              # blocked 3
+                    grid_score += 3
+
+
+                # mask frame
                 if self.mask_frame[i, j] == 1:
-                    self.mask_frame[i, j] = 5              # block 5
+                    self.mask_frame[i, j] = 3              # block 3
 
         self.info_dead_holes = dead_holes
         self.info_half_holes = half_holes
+        self.info_grid_score = grid_score
+        self.info_line_blank = line_blank
 
 
 
@@ -292,7 +300,7 @@ class CustomReward(gym.Wrapper):
 
 
     def print_status(self):
-        #print(self.upper_grid)
+        print(self.upper_grid)
         #print(self.stack_grid)
         #print(self.mask_frame)
         print(">> STATUS : reward:{}  score:{}  lines:{}  board:{}  holes:{}  half:{}  totaluse:{}".format(self.max_reward, self.curr_score, self.curr_lines, self.curr_board, self.curr_dead_holes, self.curr_half_holes, self.curr_totaluse))
