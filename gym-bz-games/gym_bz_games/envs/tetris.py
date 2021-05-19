@@ -257,7 +257,7 @@ class CustomReward(gym.Wrapper):
             for j in range(self.shape_width):
                 # upper grid
                 if self.upper_grid[i, j] == 1:             # ori blank 1
-                    if has_block:
+                    if has_block and i>=5:
                         line_blank += 1
                         self.upper_grid[i, j] = 1          # line blank 1
                         grid_score -= 1
