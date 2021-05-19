@@ -49,7 +49,7 @@ BZ-Tetris-v0:
   n_steps: 512
   n_epochs: 4
   batch_size: 512
-  n_timesteps: !!float 1e9
+  n_timesteps: !!float 1e8
   clip_range: lin_0.2
   vf_coef: 0.5
   ent_coef: 0.01
