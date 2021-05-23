@@ -6,20 +6,108 @@ from gym import spaces
 from nes_py.wrappers import JoypadSpace
 from stable_baselines3.common.type_aliases import GymObs, GymStepReturn
 from gym_bz_games.wrappers import CustomSkipFrame, NesFrameGray, NesFrameGrayHalf, NesFrameGrayCrop, RandomStart, NesFrameBinary, NesFrameGrayScale, RecorderVideo
-from gym_tetris.actions import MOVEMENT
+from gym_tetris.actions import SIMPLE_MOVEMENT
 import gym_tetris
 from gym.spaces import Box
+from gym.spaces.discrete import Discrete
+import random
 
 
-def create_env():
-    env = gym_tetris.make("TetrisA-v0")
-    env = JoypadSpace(env, MOVEMENT)
-    return env
+# Teaching Tetris by sample()
+
+class TetrisTeacher(gym.Wrapper):
+    def __init__(self, env):
+        super(TetrisTeacher, self).__init__(env)
+        self.env = env
+        self.printed = False
+        self.printed_grid = False
+
+    def step(self, action: int) -> GymStepReturn:
+        if self.env.is_need_teach():
+            action_sample = self.sample(action)
+            return self.env.step(action_sample)
+        else:
+            return self.env.step(action)
+
+
+    def sample(self, action):
+        if self.env.is_need_teach():
+            self.printed_grid = False
+            can_clear = self.move_down_clear_line(self.env.get_upper_grid())
+
+            if self.printed_grid :
+                self.printed = True
+            #can_clear = True
+
+            if can_clear:
+                #print(">> Find Clear Teach!")
+                if random.randint(1,2) == 1:
+                    return 0         # noop
+                else:
+                    return self.env.action_space.n - 1    # down
+            else:
+                return action
+        else:
+            return action
+
+    def move_down_clear_line(self, grid):
+        if self.env.curr_grid_score != 0 and not self.printed:
+            #self.env.print_status()
+            #print(self.env.upper_grid)
+            #print(grid)
+            self.printed_grid = True
+
+        grid_height = len(grid)
+        grid_width = len(grid[0])
+
+        newgrid = grid.copy()
+        blocked = False
+        find_ctrl_obj = False
+
+        for i in reversed(range(grid_height)):
+            if blocked:
+                break
+
+            for j in range(grid_width):
+                if grid[i, j] == 5:
+                    if i>4:
+                        find_ctrl_obj = True
+
+                    if i >= grid_height-1:
+                        blocked = True
+                        break
+
+                    elif grid[i+1, j] == 3:
+                        blocked = True
+                        break
+
+                    else:
+                        newgrid[i+1, j] = 5
+                        newgrid[i, j] = 0
+
+        if not find_ctrl_obj:
+            return False
+
+        if blocked:
+            for i in range(grid_height):
+                full_block = True
+
+                for j in range(grid_width):
+                    if grid[i, j] != 3 and grid[i, j] != 5:
+                        full_block = False
+
+
+                if full_block:
+                    return True
+            return False
+        else:
+            return self.move_down_clear_line(newgrid)
 
 
 # Reload gym-tetris env for 10 times.(prevent picture chaos)
 class TetrisEnvReload(gym.Wrapper):
-    def __init__(self, env, reload_resettime=10):
+    def __init__(self, reload_resettime=10):
+        env = self.create_env()
         super(TetrisEnvReload, self).__init__(env)
         self.reload_resettime = reload_resettime
         self.reset_time = 0
@@ -30,16 +118,24 @@ class TetrisEnvReload(gym.Wrapper):
         if self.reset_time > self.reload_resettime:
             #print("Reload gym-tetris env for {} times to prevent glitch".format(self.reload_resettime))
             self.env.close()
-            self.env = create_env()
+            self.env = self.create_env()
             self.reset_time = 0
 
         return self.env.reset()
+
+    def create_env(self):
+        env = gym_tetris.make("TetrisA-v0")
+        env = JoypadSpace(env, SIMPLE_MOVEMENT)
+        return env
+
+
 
 
 class CustomReward(gym.Wrapper):
     def __init__(self, env: gym.Env):
         gym.Wrapper.__init__(self, env)
         self.max_reward = 0
+        self.max_lines = 0
         self.max_score = 0
         self.curr_score = 0
         self.curr_lines = 0
@@ -52,6 +148,8 @@ class CustomReward(gym.Wrapper):
         self.shape_width = self.observation_space.shape[1]
         self.stack_grid = np.zeros((self.shape_height,self.shape_width))
         self.upper_grid = np.zeros((self.shape_height,self.shape_width))
+        self.mask_frame = np.zeros((self.shape_height,self.shape_width))
+
 
         self.curr_dead_holes = 0
         self.curr_half_holes = 0
@@ -64,6 +162,8 @@ class CustomReward(gym.Wrapper):
         self.info_grid_score = 0
 
         self.observation_space = Box(low=0, high=5, shape=(2, self.shape_height, self.shape_width), dtype=np.uint8)
+
+        self.need_teach = False
 
     def step(self, action: int) -> GymStepReturn:
         state, reward, done, info = self.env.step(action)
@@ -93,16 +193,24 @@ class CustomReward(gym.Wrapper):
         self.curr_grid_score = self.info_grid_score
 
 
-        if self.curr_board >= 15:
-            done = True
-
-        if done:
-            reward -= self.curr_half_holes*2 + self.curr_line_blank*3
-
         if info["number_of_lines"] != self.curr_lines:
             reward += pow((info["number_of_lines"] - self.curr_lines), 1.5) * 40.
             self.curr_lines = info["number_of_lines"]
             print(">> CLEAR LINE : reward:{} score:{} lines:{} board:{} blank:{} half:{} holes:{} total:{}".format(self.max_reward, self.curr_score,self.curr_lines, self.curr_board, self.curr_line_blank, self.curr_half_holes, self.curr_dead_holes, self.curr_totaluse))
+
+        if self.curr_lines > self.max_lines:
+            self.max_lines = self.curr_lines
+
+        #if self.curr_board - self.curr_lines - self.curr_totaluse/10. >= 7:
+        if self.curr_board - self.curr_totaluse/10. >= 7:
+            done = True
+
+        if self.curr_board >= 15:
+            done = True
+
+        if done:
+            #reward -= self.curr_half_holes*2 + self.curr_line_blank*3
+            reward -= self.curr_half_holes*2
 
 
         # reward sum
@@ -126,6 +234,7 @@ class CustomReward(gym.Wrapper):
 
         self.stack_grid = np.zeros((self.shape_height,self.shape_width))
         self.upper_grid = np.zeros((self.shape_height,self.shape_width))
+        self.mask_frame = np.zeros((self.shape_height,self.shape_width))
 
         self.curr_dead_holes = 0
         self.curr_half_holes = 0
@@ -137,9 +246,21 @@ class CustomReward(gym.Wrapper):
         self.info_line_blank = 0
         self.info_grid_score = 0
 
+        if self.max_lines >= random.randint(1,20):
+            self.need_teach = False
+        else:
+            self.need_teach = True
+
 
         self.env.reset(**kwargs)
         return np.zeros((2, self.shape_height, self.shape_width))
+
+    def get_upper_grid(self):
+        return self.upper_grid.copy()
+
+
+    def is_need_teach(self):
+        return self.need_teach
 
 
     def process_frame(self, frame):
@@ -307,12 +428,12 @@ class CustomReward(gym.Wrapper):
 
 
 
+
+
 class Tetris(gym.Env):
     metadata = {'render.modes':['human']}
 
     def __init__(self):
-        env = create_env()
-
         need_record = False
 
         bz_record = os.environ.get('BZ_RECORD')
@@ -322,11 +443,11 @@ class Tetris(gym.Env):
             need_record = True
 
 
-        env = TetrisEnvReload(env, reload_resettime=10)
+        env = TetrisEnvReload(reload_resettime=10)
         env = CustomSkipFrame(env, skip = 8)
 
         if need_record:
-            env = RecorderVideo(env, saved_path=os.path.join("videoes", bz_record_algo, "SuperMarioBros-{}-{}-v0.gif".format(self.world, self.stage)))
+            env = RecorderVideo(env, saved_path=os.path.join("videoes", bz_record_algo, "Tetris-v0.gif"))
 
         env = NesFrameGrayHalf(env)
         env = NesFrameGrayCrop(env)
@@ -335,6 +456,8 @@ class Tetris(gym.Env):
         env = RandomStart(env, rnum = 2)
 
         env = CustomReward(env)
+
+        env = TetrisTeacher(env)
 
         self.env = env
         self.action_space = env.action_space

@@ -3,17 +3,16 @@ BZ-Mario-v0: &BZ-Mario-v0
   frame_stack: 4
   n_envs: 8
   n_timesteps: !!float 1e9
-  batch_size: 16
+  batch_size: 64
   n_steps: 512
   gamma: 0.995
-  learning_rate: 0.0003555339212277464
+  learning_rate: 0.0002055339212277464
   ent_coef: 0.0267343653321886
   clip_range: 0.2
   n_epochs: 10
   gae_lambda: 0.9
   max_grad_norm: 1
   vf_coef: 0.8477695496184112
-
   policy_kwargs: "dict(activation_fn=nn.ReLU,
                        net_arch=[dict(pi=[256, 512, 512, 256], vf=[256, 512, 512, 256])]
                        )"
@@ -26,10 +25,11 @@ BZ-Tetris-v0:
   frame_stack: 4
   n_envs: 16
   n_timesteps: !!float 1e9
-  batch_size: 128
-  n_steps: 128
+  batch_size: 256
+  n_steps: 512
   gamma: 0.995
-  learning_rate: 0.00013481574700111216
+  learning_rate: 0.00003481574700111216
+  #learning_rate: 0.00013481574700111216
   ent_coef: 1.312836252706057e-05
   clip_range: 0.1
   n_epochs: 20

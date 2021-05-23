@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 from gym import spaces
 from nes_py.wrappers import JoypadSpace
-from gym_super_mario_bros.actions import COMPLEX_MOVEMENT
+from gym_super_mario_bros.actions import SIMPLE_MOVEMENT
 from stable_baselines3.common.type_aliases import GymObs, GymStepReturn
 from gym_bz_games.wrappers import CustomSkipFrame, NesFrameGray, NesFrameGrayHalf, RandomStart, RecorderVideo
 import gym_super_mario_bros
@@ -29,10 +29,10 @@ class CustomReward(gym.Wrapper):
         state, reward, done, info = self.env.step(action)
 
         reward = 0
-        reward += (info["score"] - self.curr_score) / 10.
+        reward += (info["score"] - self.curr_score) / 20.
         self.curr_score = info["score"]
 
-        reward += (info["coins"] - self.curr_coins) * 40.
+        #reward += (info["coins"] - self.curr_coins) * 20.
         self.curr_coins = info["coins"]
 
         player_status = 0
@@ -46,15 +46,15 @@ class CustomReward(gym.Wrapper):
         if info["status"] != "small" and info["status"] != "tall":
             player_status = 2
 
-        reward += (player_status - self.curr_status) * 100.
+        #reward += (player_status - self.curr_status) * 50.
         self.curr_status = player_status
 
         self.curr_frame += 1
 
         self.curr_x = info["x_pos"]
 
-        if self.curr_x > self.curr_x_max + 30:
-            self.curr_x_max = self.curr_x_max + 30
+        if self.curr_x > self.curr_x_max + 10:
+            self.curr_x_max = self.curr_x_max + 10
             reward += 2
             self.curr_x_max_frame = self.curr_frame
 
@@ -66,9 +66,9 @@ class CustomReward(gym.Wrapper):
 
         if done:
             if info["flag_get"]:
-                reward += 300
+                reward += 200
             else:
-                reward -= 50
+                reward -= 20
 
         self.curr_reward_sum += reward
 
@@ -112,7 +112,7 @@ class Mario(gym.Env):
 
 
         env = gym_super_mario_bros.make("SuperMarioBros-{}-{}-v0".format(self.world, self.stage))
-        env = JoypadSpace(env, COMPLEX_MOVEMENT)
+        env = JoypadSpace(env, SIMPLE_MOVEMENT)
 
         env = CustomSkipFrame(env, skip = 2)
 
