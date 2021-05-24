@@ -103,19 +103,19 @@ class TetrisTeacher(gym.Wrapper):
             # detact holes
             line_blank, half_holes, dead_holes, grid_score = self.compute_grid(grid)
             if line_blank <= self.curr_line_blank and half_holes<=self.curr_half_holes and dead_holes<=self.curr_dead_holes and grid_score>=self.curr_grid_score:
-                print(">>  Find Teach by Score")
+                #print(">>  Find Teach by Score")
                 return True
-            
+
             # else return false
             return False
         else:
             return self.move_down_clear_line(newgrid)
 
 
-    def search_open(stack_grid, upper_grid, posheight, poswidth):
+    def search_noblock(self, stack_grid, upper_grid, posheight, poswidth):
         grid_height = len(stack_grid)
         grid_width = len(stack_grid[0])
-        
+
         if posheight<0 or poswidth<0 or posheight >= grid_height or poswidth >= grid_width:
             return
 
@@ -129,23 +129,26 @@ class TetrisTeacher(gym.Wrapper):
         if upper_grid[posheight, poswidth] == 1:  # has set cleaned
             return
 
-        if stack_grid[posheight, poswidth] == 1:
+        if stack_grid[posheight, poswidth] != 5 and stack_grid[posheight, poswidth] != 3:
             upper_grid[posheight, poswidth] = 1     # clean
 
-            search_open(posheight, poswidth-1)
-            search_open(posheight, poswidth+1)
-            search_open(posheight-1, poswidth)
-            search_open(posheight+1, poswidth)
+            self.search_noblock(stack_grid, upper_grid, posheight, poswidth-1)
+            self.search_noblock(stack_grid, upper_grid, posheight, poswidth+1)
+            self.search_noblock(stack_grid, upper_grid, posheight-1, poswidth)
+            self.search_noblock(stack_grid, upper_grid, posheight+1, poswidth)
 
 
-    def compute_grid(grid):
+    def compute_grid(self, grid):
         grid_height = len(grid)
         grid_width = len(grid[0])
-        
+
+        #print(grid)
+
         stack_grid = grid
         upper_grid = np.zeros((grid_height, grid_width))
-        self.search_open(stack_grid, upper_grid, 0, 0)
-        
+        self.search_noblock(stack_grid, upper_grid, 0, 0)
+
+        #print(upper_grid)
 
 
         # mask all half upper obj
@@ -173,6 +176,8 @@ class TetrisTeacher(gym.Wrapper):
         half_holes = 0
         line_blank = 0
         grid_score = 0
+
+        #print(upper_grid)
 
         #origin:     blank 1, line_blank 1, half_hole 3, blocked 5, dead_hole 4, control 2
         #modify to:  blank 0, line_blank 1, half_hole 2, blocked 3, dead_hole 4, control 5
@@ -215,10 +220,9 @@ class TetrisTeacher(gym.Wrapper):
                     grid_score += 3
 
 
-        print(stack_grid)
-        print(upper_grid)
-        print(">> Teach Compute Score: line:{} half:{} dead:{} score:{}".format(line_blank, half_holes, dead_holes, grid_score ))
-        
+        #print(upper_grid)
+        #print(">> Teach Compute Score: line:{} half:{} dead:{} score:{}".format(line_blank, half_holes, dead_holes, grid_score ))
+
         return line_blank, half_holes, dead_holes, grid_score 
 
 # Reload gym-tetris env for 10 times.(prevent picture chaos)
@@ -280,7 +284,7 @@ class CustomReward(gym.Wrapper):
 
         self.observation_space = Box(low=0, high=5, shape=(2, self.shape_height, self.shape_width), dtype=np.uint8)
 
-        self.need_teach = False
+        self.need_teach = True
 
     def step(self, action: int) -> GymStepReturn:
         state, reward, done, info = self.env.step(action)
@@ -372,9 +376,12 @@ class CustomReward(gym.Wrapper):
         self.info_line_blank = 0
         self.info_grid_score = 0
 
+        self.need_teach = True
+
 
         self.env.reset(**kwargs)
         return np.zeros((2, self.shape_height, self.shape_width))
+
 
     def get_upper_grid(self):
         return self.upper_grid.copy()
