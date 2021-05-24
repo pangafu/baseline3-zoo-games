@@ -2,22 +2,19 @@ BZ-Mario-v0: &BZ-Mario-v0
   policy: 'CnnPolicy'
   frame_stack: 4
   n_envs: 8
-  n_timesteps: !!float 1e9
-  batch_size: 64
   n_steps: 512
-  gamma: 0.995
-  learning_rate: 0.0002055339212277464
-  ent_coef: 0.0267343653321886
-  clip_range: 0.2
-  n_epochs: 10
-  gae_lambda: 0.9
-  max_grad_norm: 1
-  vf_coef: 0.8477695496184112
-  policy_kwargs: "dict(activation_fn=nn.ReLU,
+  n_epochs: 4
+  batch_size: 512
+  n_timesteps: !!float 1e9
+  clip_range: lin_0.2
+  vf_coef: 0.5
+  ent_coef: 0.01
+  learning_rate: !!float 5e-5
+  policy_kwargs: "dict(log_std_init=-2,
+                       ortho_init=False,
+                       activation_fn=nn.ReLU,
                        net_arch=[dict(pi=[256, 512, 512, 256], vf=[256, 512, 512, 256])]
                        )"
-
-
 
 
 BZ-Tetris-v0:
@@ -25,11 +22,10 @@ BZ-Tetris-v0:
   frame_stack: 4
   n_envs: 16
   n_timesteps: !!float 1e9
-  batch_size: 256
+  batch_size: 512
   n_steps: 512
   gamma: 0.995
-  learning_rate: 0.00003481574700111216
-  #learning_rate: 0.00013481574700111216
+  learning_rate: !!float 3.5e-5
   ent_coef: 1.312836252706057e-05
   clip_range: 0.1
   n_epochs: 20
@@ -47,21 +43,20 @@ BZ-Mario-bak-v0: &BZ-Mario-bak-v0
   policy: 'CnnPolicy'
   frame_stack: 4
   n_envs: 8
-  n_steps: 512
-  n_epochs: 4
-  batch_size: 512
   n_timesteps: !!float 1e9
-  clip_range: lin_0.2
-  vf_coef: 0.5
-  ent_coef: 0.01
-  learning_rate: !!float 5e-5
-
-  policy_kwargs: "dict(log_std_init=-2,
-                       ortho_init=False,
-                       activation_fn=nn.ReLU,
+  batch_size: 64
+  n_steps: 512
+  gamma: 0.995
+  learning_rate: 0.0002055339212277464
+  ent_coef: 0.0267343653321886
+  clip_range: 0.2
+  n_epochs: 10
+  gae_lambda: 0.9
+  max_grad_norm: 1
+  vf_coef: 0.8477695496184112
+  policy_kwargs: "dict(activation_fn=nn.ReLU,
                        net_arch=[dict(pi=[256, 512, 512, 256], vf=[256, 512, 512, 256])]
                        )"
-
 
 BZ-Tetris-bak-v0:
   policy: 'MlpPolicy'
@@ -81,10 +76,6 @@ BZ-Tetris-bak-v0:
                        activation_fn=nn.ReLU,
                        net_arch=[dict(pi=[256, 512, 512, 256], vf=[256, 512, 512, 256])]
                        )"
-
-
-
-
 
 
 

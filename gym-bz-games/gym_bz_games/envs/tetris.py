@@ -92,17 +92,134 @@ class TetrisTeacher(gym.Wrapper):
             for i in range(grid_height):
                 full_block = True
 
+                # detech full block
                 for j in range(grid_width):
                     if grid[i, j] != 3 and grid[i, j] != 5:
                         full_block = False
 
-
                 if full_block:
                     return True
+
+            # detact holes
+            line_blank, half_holes, dead_holes, grid_score = self.compute_grid(grid)
+            if line_blank <= self.curr_line_blank and half_holes<=self.curr_half_holes and dead_holes<=self.curr_dead_holes and grid_score>=self.curr_grid_score:
+                print(">>  Find Teach by Score")
+                return True
+            
+            # else return false
             return False
         else:
             return self.move_down_clear_line(newgrid)
 
+
+    def search_open(stack_grid, upper_grid, posheight, poswidth):
+        grid_height = len(stack_grid)
+        grid_width = len(stack_grid[0])
+        
+        if posheight<0 or poswidth<0 or posheight >= grid_height or poswidth >= grid_width:
+            return
+
+        if stack_grid[posheight, poswidth] == 5 or  stack_grid[posheight, poswidth] == 3:
+            upper_grid[posheight, poswidth] = 5      #blocked
+            return
+
+        if upper_grid[posheight, poswidth] == 5:  # has set blocked
+            return
+
+        if upper_grid[posheight, poswidth] == 1:  # has set cleaned
+            return
+
+        if stack_grid[posheight, poswidth] == 1:
+            upper_grid[posheight, poswidth] = 1     # clean
+
+            search_open(posheight, poswidth-1)
+            search_open(posheight, poswidth+1)
+            search_open(posheight-1, poswidth)
+            search_open(posheight+1, poswidth)
+
+
+    def compute_grid(grid):
+        grid_height = len(grid)
+        grid_width = len(grid[0])
+        
+        stack_grid = grid
+        upper_grid = np.zeros((grid_height, grid_width))
+        self.search_open(stack_grid, upper_grid, 0, 0)
+        
+
+
+        # mask all half upper obj
+        for j in range(grid_width):
+            has_blocked = False
+            for i in range(grid_height):
+                if stack_grid[i, j] == 5 or stack_grid[i, j] == 3:
+                    has_blocked = True
+
+                if upper_grid[i, j] == 0:
+                    if stack_grid[i, j] == 5 or stack_grid[i, j] == 3:
+                        upper_grid[i, j] = 5          # blocked  5
+                    else:
+                        upper_grid[i, j] = 4          # dead hole  4
+                elif upper_grid[i, j] == 1:
+                    if has_blocked:
+                        upper_grid[i, j] = 3          # half dead hole  3
+                    else:
+                        upper_grid[i, j] == 1         # clean  1
+                elif upper_grid[i, j] == 5:
+                    upper_grid[i, j] = 5             # blocked  5
+
+
+        dead_holes = 0
+        half_holes = 0
+        line_blank = 0
+        grid_score = 0
+
+        #origin:     blank 1, line_blank 1, half_hole 3, blocked 5, dead_hole 4, control 2
+        #modify to:  blank 0, line_blank 1, half_hole 2, blocked 3, dead_hole 4, control 5
+        for i in range(grid_height):
+            has_block = False
+            for j in range(grid_width):
+                if upper_grid[i, j] == 5:
+                    has_block = True
+                    break
+
+
+            for j in range(grid_width):
+                # upper grid
+                if upper_grid[i, j] == 1:             # ori blank 1
+                    if has_block and i>=5:
+                        line_blank += 1
+                        upper_grid[i, j] = 1          # line blank 1
+                        grid_score -= 1
+                    else:
+                        upper_grid[i, j] = 0          # blank 0
+
+
+                elif upper_grid[i, j] == 2:           # ori control 2
+                    upper_grid[i, j] = 5              # control 5
+
+
+                elif upper_grid[i, j] == 3:           # ori half_hole 3
+                    half_holes += 1
+                    upper_grid[i, j] = 2              # half_hole 2
+                    grid_score -= 2
+
+
+                elif upper_grid[i, j] == 4:           # ori dead_hole 4
+                    dead_holes += 1
+                    upper_grid[i, j] = 4              # dead_hole 4
+                    grid_score -= 4
+
+                elif upper_grid[i, j] == 5:           # ori blocked 5
+                    upper_grid[i, j] = 3              # blocked 3
+                    grid_score += 3
+
+
+        print(stack_grid)
+        print(upper_grid)
+        print(">> Teach Compute Score: line:{} half:{} dead:{} score:{}".format(line_blank, half_holes, dead_holes, grid_score ))
+        
+        return line_blank, half_holes, dead_holes, grid_score 
 
 # Reload gym-tetris env for 10 times.(prevent picture chaos)
 class TetrisEnvReload(gym.Wrapper):
@@ -196,7 +313,16 @@ class CustomReward(gym.Wrapper):
         if info["number_of_lines"] != self.curr_lines:
             reward += pow((info["number_of_lines"] - self.curr_lines), 1.5) * 40.
             self.curr_lines = info["number_of_lines"]
-            print(">> CLEAR LINE : reward:{} score:{} lines:{} board:{} blank:{} half:{} holes:{} total:{}".format(self.max_reward, self.curr_score,self.curr_lines, self.curr_board, self.curr_line_blank, self.curr_half_holes, self.curr_dead_holes, self.curr_totaluse))
+            if self.need_teach:
+                print(">> CLEAR LINE TEACH: reward:{} score:{} lines:{} board:{} blank:{} half:{} holes:{} total:{}".format(self.max_reward, self.curr_score,self.curr_lines, self.curr_board, self.curr_line_blank, self.curr_half_holes, self.curr_dead_holes, self.curr_totaluse))
+            else:
+                print(">> CLEAR LINE SELF: reward:{} score:{} lines:{} board:{} blank:{} half:{} holes:{} total:{}".format(self.max_reward, self.curr_score,self.curr_lines, self.curr_board, self.curr_line_blank, self.curr_half_holes, self.curr_dead_holes, self.curr_totaluse))
+
+            if self.curr_lines >= random.randint(1,20):
+                self.need_teach = False
+            else:
+                self.need_teach = True
+
 
         if self.curr_lines > self.max_lines:
             self.max_lines = self.curr_lines
@@ -245,11 +371,6 @@ class CustomReward(gym.Wrapper):
         self.info_half_holes = 0
         self.info_line_blank = 0
         self.info_grid_score = 0
-
-        if self.max_lines >= random.randint(1,20):
-            self.need_teach = False
-        else:
-            self.need_teach = True
 
 
         self.env.reset(**kwargs)
@@ -320,7 +441,7 @@ class CustomReward(gym.Wrapper):
             if self.upper_grid[posheight, poswidth] == 5:  # has set blocked
                 return
 
-            if self.upper_grid[posheight, poswidth] == 1:  # has set blocked
+            if self.upper_grid[posheight, poswidth] == 1:  # has set cleaned
                 return
 
             if self.stack_grid[posheight, poswidth] == 1:
