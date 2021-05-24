@@ -35,7 +35,7 @@ while true; do
   python baselines3-zoo/enjoy.py --algo $1 --env $2 --folder logs/ --num-threads 1 --n-envs 1 -n 2000 --load-best
 
   echo ""
-  echo ">>>> TEST LAST END - "
+  echo ">>>> TEST BEST END - "
 
 
   echo ""

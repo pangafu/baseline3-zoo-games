@@ -284,7 +284,10 @@ class CustomReward(gym.Wrapper):
 
         self.observation_space = Box(low=0, high=5, shape=(2, self.shape_height, self.shape_width), dtype=np.uint8)
 
-        self.need_teach = True
+        if self.curr_lines >= random.randint(0,9):
+            self.need_teach = False
+        else:
+            self.need_teach = True
 
     def step(self, action: int) -> GymStepReturn:
         state, reward, done, info = self.env.step(action)
@@ -322,7 +325,7 @@ class CustomReward(gym.Wrapper):
             else:
                 print(">> CLEAR LINE SELF: reward:{} score:{} lines:{} board:{} blank:{} half:{} holes:{} total:{}".format(self.max_reward, self.curr_score,self.curr_lines, self.curr_board, self.curr_line_blank, self.curr_half_holes, self.curr_dead_holes, self.curr_totaluse))
 
-            if self.curr_lines >= random.randint(1,20):
+            if self.curr_lines >= random.randint(0,9):
                 self.need_teach = False
             else:
                 self.need_teach = True
@@ -332,15 +335,15 @@ class CustomReward(gym.Wrapper):
             self.max_lines = self.curr_lines
 
         #if self.curr_board - self.curr_lines - self.curr_totaluse/10. >= 7:
-        if self.curr_board - self.curr_totaluse/10. >= 7:
+        if self.curr_board - self.curr_lines - self.curr_totaluse/10. >= 7:
             done = True
 
         if self.curr_board >= 15:
             done = True
 
         if done:
-            #reward -= self.curr_half_holes*2 + self.curr_line_blank*3
-            reward -= self.curr_half_holes*2
+            reward -= self.curr_half_holes*2 + self.curr_line_blank*3
+            #reward -= self.curr_half_holes*2
 
 
         # reward sum
@@ -376,7 +379,11 @@ class CustomReward(gym.Wrapper):
         self.info_line_blank = 0
         self.info_grid_score = 0
 
-        self.need_teach = True
+        if self.curr_lines >= random.randint(0,9):
+            self.need_teach = False
+        else:
+            self.need_teach = True
+
 
 
         self.env.reset(**kwargs)
