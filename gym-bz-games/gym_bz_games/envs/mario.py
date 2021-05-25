@@ -29,10 +29,10 @@ class CustomReward(gym.Wrapper):
         state, reward, done, info = self.env.step(action)
 
         reward = 0
-        reward += (info["score"] - self.curr_score) / 20.
+        reward += (info["score"] - self.curr_score) / 50.
         self.curr_score = info["score"]
 
-        reward += (info["coins"] - self.curr_coins) * 20.
+        #reward += (info["coins"] - self.curr_coins) * 20.
         self.curr_coins = info["coins"]
 
         player_status = 0
@@ -46,12 +46,30 @@ class CustomReward(gym.Wrapper):
         if info["status"] != "small" and info["status"] != "tall":
             player_status = 2
 
-        reward += (player_status - self.curr_status) * 50.
+        #reward += (player_status - self.curr_status) * 50.
         self.curr_status = player_status
 
-        self.curr_frame += 1
+        if self.world == 7 and self.stage == 4:
+            if (506 <= info["x_pos"] <= 832 and info["y_pos"] > 127) or (
+                    832 < info["x_pos"] <= 1064 and info["y_pos"] < 80) or (
+                    1113 < info["x_pos"] <= 1464 and info["y_pos"] < 191) or (
+                    1579 < info["x_pos"] <= 1943 and info["y_pos"] < 191) or (
+                    1946 < info["x_pos"] <= 1964 and info["y_pos"] >= 191) or (
+                    1984 < info["x_pos"] <= 2060 and (info["y_pos"] >= 191 or info["y_pos"] < 127)) or (
+                    2114 < info["x_pos"] < 2440 and info["y_pos"] < 191) or info["x_pos"] < self.curr_x - 500:
+                reward -= 50
+                done = True
+
+        if self.world == 4 and self.stage == 4:
+            if (info["x_pos"] <= 1500 and info["y_pos"] < 127) or (
+                    1588 <= info["x_pos"] < 2380 and info["y_pos"] >= 127):
+                reward = -50
+                done = True
+
 
         self.curr_x = info["x_pos"]
+
+        self.curr_frame += 1
 
         if self.curr_x > self.curr_x_max + 5:
             self.curr_x_max = self.curr_x_max + 5
@@ -68,7 +86,7 @@ class CustomReward(gym.Wrapper):
             if info["flag_get"]:
                 reward += 200
             else:
-                reward -= 50
+                reward -= 10
 
         self.curr_reward_sum += reward
 
