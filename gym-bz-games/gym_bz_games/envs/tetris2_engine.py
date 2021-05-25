@@ -8,7 +8,7 @@
 import numpy as np
 import random
 from controllers import basic_evaluation_fn,best_action
-from utils.tetris_engine_utils import *
+from tetris2_utils import *
 
 
 class TetrisEngine:
@@ -225,7 +225,7 @@ class TetrisEngine:
         
         reward = self.penalty if done else self.calc_reward() 
         self.total_reward+=reward
-        return state, round(reward,3), done
+        return state, round(reward,3), done, []
 
     def clear(self):
         self.time = 0
@@ -273,12 +273,12 @@ class TetrisEngine:
         return basic_evaluation_fn(self,self.eval_fn,melax_factor=self.melax_factor,clamp_diff=self.clamp_diff)
         
                 
-if __name__=="__main__":
-    engine = TetrisEngine(10,20)
-    done = False 
-    while not done: 
-        _,_,done=engine.step(1)
-        print(engine)
+# if __name__=="__main__":
+#     engine = TetrisEngine(10,20)
+#     done = False 
+#     while not done: 
+#         _,_,done=engine.step(1)
+#         print(engine)
 
 
 
