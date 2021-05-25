@@ -1,8 +1,6 @@
 
 from gym.envs.registration import register
-from gym_bz_games.envs import Mario, Mario11, Mario12, Mario13, Mario14
-from gym_bz_games.envs import Tetris
-
+from gym_bz_games.envs import *
 
 register(id='BZ-Mario-v0', entry_point='gym_bz_games:Mario')
 register(id='BZ-Mario-1-1-v0', entry_point='gym_bz_games:Mario11')
@@ -39,4 +37,5 @@ register(id='BZ-Mario-8-3-v0', entry_point='gym_bz_games:Mario83')
 register(id='BZ-Mario-8-4-v0', entry_point='gym_bz_games:Mario84')
 
 register(id='BZ-Tetris-v0', entry_point='gym_bz_games:Tetris')
+register(id='BZ-Tetris2-v0', entry_point='gym_bz_games:Tetris2')
 

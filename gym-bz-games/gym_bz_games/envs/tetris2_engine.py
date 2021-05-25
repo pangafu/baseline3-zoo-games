@@ -7,8 +7,8 @@
 
 import numpy as np
 import random
-from controllers import basic_evaluation_fn,best_action
-from tetris2_utils import *
+from gym_bz_games.envs.tetris2_controllers import basic_evaluation_fn,best_action
+from gym_bz_games.envs.tetris2_utils import *
 
 
 class TetrisEngine:
@@ -225,7 +225,7 @@ class TetrisEngine:
         
         reward = self.penalty if done else self.calc_reward() 
         self.total_reward+=reward
-        return state, round(reward,3), done, []
+        return state, round(reward,3), done
 
     def clear(self):
         self.time = 0
