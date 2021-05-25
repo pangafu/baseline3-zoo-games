@@ -7,7 +7,7 @@ from stable_baselines3.common.type_aliases import GymObs, GymStepReturn
 from gym.spaces import Box
 from gym.spaces.discrete import Discrete
 import random
-from gym_bz_games.envs.tetris2_engine import TetrisEngine
+from gym_bz_games.envs.tetris2_env import TetrisEnv
 
 class Tetris2(gym.Env):
     metadata = {'render.modes':['human']}
@@ -30,27 +30,24 @@ class Tetris2(gym.Env):
         #init
         self.env = TetrisEngine(10,20)
 
-        self.action_space = Discrete(self.env.nb_actions)
-        self.observation_space = Box(low=0, high=1, shape=(20, 10), dtype=np.uint8)
+        self.action_space = self.env.action_space
+        self.observation_space = self.env.observation_space
 
         #print(self.action_space)
         #print(self.observation_space)
 
 
     def step(self, action):
-        info, reward, done = self.env.step(action)
-        state = np.rot90(self.env.board,-1)
-        return state, reward, done, info
+        return self.env.step(action)
 
     def reset(self):
-        self.env.clear()
-        return np.rot90(self.env.board,-1)
+        return self.env.clear()
 
     def render(self, mode='human'):
-        return print(self.env)
+        return self.env.render()
 
     def close (self):
-        return
+        return self.env.close()
 
     def print_status(self):
         return print(self.env)
