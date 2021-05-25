@@ -2,26 +2,8 @@ BZ-Mario-v0: &BZ-Mario-v0
   policy: 'CnnPolicy'
   frame_stack: 4
   n_envs: 8
-  n_steps: 512
-  n_epochs: 4
-  batch_size: 512
-  n_timesteps: !!float 1e9
-  clip_range: lin_0.1
-  vf_coef: 0.5
-  gamma: 0.99
-  gae_lambda: 0.9
-  ent_coef: 0.0
-  sde_sample_freq: 4
-  max_grad_norm: 0.5
-  vf_coef: 0.5
-  learning_rate: !!float 3e-5
-  clip_range: 0.4
-  normalize: true
-  gradient_steps: 8
-  exploration_fraction: 0.2
-  exploration_final_eps: 0.07
-  optimize_memory_usage: True
-  policy_kwargs: "dict(net_arch=[256, 512, 512, 256], n_quantiles=150)"
+  n_timesteps: !!float 2e7
+
 
 BZ-Tetris-v0:
   policy: 'CnnPolicy'

@@ -3,7 +3,7 @@ BZ-Mario-v0: &BZ-Mario-v0
   frame_stack: 4
   n_envs: 8
   n_timesteps: !!float 1e9
-  batch_size: 128
+  batch_size: 64
   n_steps: 512
   gamma: 0.995
   learning_rate: !!float 1e-4
