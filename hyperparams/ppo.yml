@@ -3,16 +3,23 @@ BZ-Mario-v0: &BZ-Mario-v0
   frame_stack: 4
   n_envs: 8
   n_timesteps: !!float 1e9
-  batch_size: 64
+  batch_size: 128
   n_steps: 512
-  gamma: 0.995
+  gamma: 0.95  
+  #0.99
+  gae_lambda: 0.8
+  #0.8  
+  n_epochs: 20
+  ent_coef: 0.0
+  sde_sample_freq: 4
+  max_grad_norm: 0.5
+  vf_coef: 0.5
   learning_rate: !!float 1e-4
-  ent_coef: 0.0267343653321886
-  clip_range: 0.2
-  n_epochs: 10
-  gae_lambda: 0.9
-  max_grad_norm: 1
-  vf_coef: 0.8477695496184112
+  #use_sde: True
+  #clip_range: 0.4
+  #clip_range_vf: 0.4
+  #create_eval_env: True
+
   policy_kwargs: "dict(activation_fn=nn.ReLU,
                        net_arch=[dict(pi=[256, 512, 512, 256], vf=[256, 512, 512, 256])]
                        )"
