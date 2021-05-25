@@ -42,5 +42,8 @@ from .tetris import (
 )
 
 
+from .tetris2 import (
+    Tetris2,
+)
 
 
