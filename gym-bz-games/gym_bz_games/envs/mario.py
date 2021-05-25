@@ -29,10 +29,10 @@ class CustomReward(gym.Wrapper):
         state, reward, done, info = self.env.step(action)
 
         reward = 0
-        reward += (info["score"] - self.curr_score) / 50.
+        reward += (info["score"] - self.curr_score) / 20.
         self.curr_score = info["score"]
 
-        #reward += (info["coins"] - self.curr_coins) * 20.
+        reward += (info["coins"] - self.curr_coins) * 20.
         self.curr_coins = info["coins"]
 
         player_status = 0
@@ -46,7 +46,7 @@ class CustomReward(gym.Wrapper):
         if info["status"] != "small" and info["status"] != "tall":
             player_status = 2
 
-        #reward += (player_status - self.curr_status) * 50.
+        reward += (player_status - self.curr_status) * 50.
         self.curr_status = player_status
 
         self.curr_frame += 1
@@ -68,7 +68,7 @@ class CustomReward(gym.Wrapper):
             if info["flag_get"]:
                 reward += 200
             else:
-                reward -= 10
+                reward -= 50
 
         self.curr_reward_sum += reward
 
