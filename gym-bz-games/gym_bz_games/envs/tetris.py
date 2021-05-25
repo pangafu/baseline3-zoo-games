@@ -570,6 +570,7 @@ class Tetris(gym.Env):
 
     def __init__(self):
         need_record = False
+        need_test = False
 
         bz_record = os.environ.get('BZ_RECORD')
         bz_record_algo = os.environ.get('BZ_RECORD_ALGO')
@@ -577,6 +578,9 @@ class Tetris(gym.Env):
         if bz_record and bz_record == "1":
             need_record = True
 
+        bz_test = os.environ.get('BZ_TEST')
+        if bz_test and bz_test == "1":
+            need_test = True
 
         env = TetrisEnvReload(reload_resettime=10)
         env = CustomSkipFrame(env, skip = 8)
@@ -592,7 +596,10 @@ class Tetris(gym.Env):
 
         env = CustomReward(env)
 
-        env = TetrisTeacher(env)
+        if not need_test:
+            env = TetrisTeacher(env)
+        else:
+            print(">> No Teach in TEST MODE!")
 
         self.env = env
         self.action_space = env.action_space

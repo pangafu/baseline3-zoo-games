@@ -19,6 +19,8 @@ while true; do
   echo ">>>> TEST LAST BEGIN + "
   echo ""
 
+  export BZ_TEST=1
+
   python baselines3-zoo/enjoy.py --algo $1 --env $2 --folder logs/ --num-threads 1 --n-envs 1 -n 2000 --load-checkpoint-last
 
   echo ""
@@ -34,6 +36,7 @@ while true; do
 
   python baselines3-zoo/enjoy.py --algo $1 --env $2 --folder logs/ --num-threads 1 --n-envs 1 -n 2000 --load-best
 
+  unset BZ_TEST
   echo ""
   echo ">>>> TEST BEST END - "
 
