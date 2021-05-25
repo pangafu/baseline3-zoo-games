@@ -2,8 +2,19 @@ BZ-Mario-v0: &BZ-Mario-v0
   policy: 'CnnPolicy'
   frame_stack: 4
   n_envs: 8
-  n_timesteps: !!float 2e7
-
+  n_timesteps: !!float 2e5
+  policy: 'CnnPolicy'
+  learning_rate: lin_1e-4
+  batch_size: 128
+  buffer_size: 100000
+  learning_starts: 10000
+  gamma: 0.995
+  target_update_interval: 1
+  train_freq: 256
+  gradient_steps: -1
+  exploration_fraction: 0.24
+  exploration_final_eps: 0.18
+  policy_kwargs: "dict(net_arch=[256,  512, 512, 256], n_quantiles=170)"
 
 BZ-Tetris-v0:
   policy: 'CnnPolicy'
