@@ -1,1 +1,1 @@
-./train.sh ppo BZ-Tetris-v0
+./train.sh ppo BZ-Tetris2-v0

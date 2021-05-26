@@ -9,7 +9,7 @@ class TetrisEnv(gym.Env):
 
     def __init__(self):
         self.action_space = spaces.Discrete(7)
-        self.observation_space = spaces.Box(low=0, high=2, shape=(1, 29, 10), dtype=np.float32)
+        self.observation_space = spaces.Box(low=0, high=2, shape=(29, 10, 1), dtype=np.float32)
         self.controller = controller()
 
     """
@@ -56,7 +56,7 @@ class TetrisEnv(gym.Env):
 
         is_done = self.controller.gameover
 
-        return obs, reward, is_done, [landed, fire, pos]
+        return obs, reward, is_done, {"landed":landed, "fire":fire, "pos":pos}
             
 
     def reset(self):

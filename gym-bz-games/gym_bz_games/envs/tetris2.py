@@ -8,6 +8,7 @@ from gym.spaces import Box
 from gym.spaces.discrete import Discrete
 import random
 from gym_bz_games.envs.tetris2_env import TetrisEnv
+import time
 
 class Tetris2(gym.Env):
     metadata = {'render.modes':['human']}
@@ -28,23 +29,60 @@ class Tetris2(gym.Env):
             need_test = True
 
         #init
-        self.env = TetrisEngine(10,20)
+        self.env = TetrisEnv()
 
         self.action_space = self.env.action_space
         self.observation_space = self.env.observation_space
+
+        self.last_state = None
+        self.last_reward = 0
+        self.last_done = False
+        self.last_info = None
+
+        self.max_reward = -100
+        self.curr_reward_sum = 0
 
         #print(self.action_space)
         #print(self.observation_space)
 
 
     def step(self, action):
-        return self.env.step(action)
+        state, reward, done, info = self.env.step(action)
+        self.last_state = state
+        self.last_reward = reward
+        self.last_done = done
+        self.last_info = info
+
+
+        # reward sum
+        self.curr_reward_sum += reward
+
+        if self.curr_reward_sum > self.max_reward:
+            self.max_reward = self.curr_reward_sum
+            print(">> MAX REWARD : reward:{}".format(self.max_reward))
+
+        return state[:, :, None], reward, done, info
 
     def reset(self):
-        return self.env.clear()
+        self.last_state = self.env.reset()
+        self.last_reward = 0
+        self.last_done = False
+        self.last_info = None
+
+        self.curr_reward_sum = 0
+
+        return self.last_state[:, :, None]
 
     def render(self, mode='human'):
-        return self.env.render()
+        if self.last_reward != 0:
+            print("-------------------------------------------------------------")
+            print(self.last_state)
+            print("Reward:{}".format(self.last_reward))
+            print("Done:{}".format(self.last_done))
+            print("Info:{}".format(self.last_info))
+            time.sleep(0.3)
+        else:
+            return
 
     def close (self):
         return self.env.close()

@@ -46,6 +46,14 @@ BZ-Tetris-v0:
                        )"
 
 
+BZ-Tetris2-v0:
+  policy: 'MlpPolicy'
+  frame_stack: 4
+  n_envs: 1
+  n_timesteps: !!float 2e5
+  create_eval_env: False
+
+
 
 BZ-Mario-bak-v0: &BZ-Mario-bak-v0
   policy: 'CnnPolicy'
