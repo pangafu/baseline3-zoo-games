@@ -41,12 +41,16 @@ class Tetris2(gym.Env):
 
         self.max_reward = -100
         self.curr_reward_sum = 0
+        self.curr_frame = 0
 
-        #print(self.action_space)
-        #print(self.observation_space)
 
 
     def step(self, action):
+        ##if self.last_done:
+        #    self.reset()
+
+        self.curr_frame += 1
+
         state, reward, done, info = self.env.step(action)
         self.last_state = state
         self.last_reward = reward
@@ -54,14 +58,33 @@ class Tetris2(gym.Env):
         self.last_info = info
 
 
+        # every 2 frame soft drop once
+        if self.curr_frame % 2  and not self.last_done:
+            state2, reward2, done2, info2 = self.env.step(4)       #soft drop
+            self.last_state = state2
+            self.last_reward += reward2
+            self.last_done = done2
+            self.last_info = info2
+
+        # every 14 frame soft drop twice to prevent loop
+        if self.curr_frame % 7  and not self.last_done:
+            state3, reward3, done3, info3 = self.env.step(4)       #soft drop
+            self.last_state = state3
+            self.last_reward += reward3
+            self.last_done = done3
+            self.last_info = info3
+
         # reward sum
-        self.curr_reward_sum += reward
+        self.curr_reward_sum += self.last_reward
+
 
         if self.curr_reward_sum > self.max_reward:
             self.max_reward = self.curr_reward_sum
             print(">> MAX REWARD : reward:{}".format(self.max_reward))
 
-        return state[:, :, None], reward, done, info
+
+        #self.render()
+        return self.last_state, self.last_reward, self.last_done, self.last_info
 
     def reset(self):
         self.last_state = self.env.reset()
@@ -70,11 +93,13 @@ class Tetris2(gym.Env):
         self.last_info = None
 
         self.curr_reward_sum = 0
+        self.curr_frame = 0
 
-        return self.last_state[:, :, None]
+        return self.last_state
 
     def render(self, mode='human'):
         if self.last_reward != 0:
+        #if True:
             print("-------------------------------------------------------------")
             print(self.last_state)
             print("Reward:{}".format(self.last_reward))

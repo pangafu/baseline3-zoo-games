@@ -316,7 +316,7 @@ class controller:
             if self.field[22] == [0 for i in range(10)]:
                 all_deleted = 4
             
-            print(">> CLEAR LINE:{}".format(lines_deleted))
+            print(">> CLEAR LINE:{}".format(self.score_text))
             return basis + btb + self.ren + all_deleted, x_list, perfect_landed, pos
 
 
