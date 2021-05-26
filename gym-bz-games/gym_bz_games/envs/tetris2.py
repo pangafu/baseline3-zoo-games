@@ -283,7 +283,7 @@ class Tetris2Movedown(gym.Wrapper):
 
 
         # every 2 frame soft drop once
-        if self.curr_frame % 2  and not last_done:
+        if action != 4 and action != 5 and self.curr_frame % 2  and not last_done:
             state2, reward2, done2, info2 = self.env.step(4)       #soft drop
             last_state = state2
             last_reward += reward2
@@ -291,7 +291,7 @@ class Tetris2Movedown(gym.Wrapper):
             last_info = info2
 
         # every 10 frame soft drop twice to prevent loop
-        if self.curr_frame % 5  and not last_done:
+        if action != 4 and action != 5 and self.curr_frame % 5  and not last_done:
             state3, reward3, done3, info3 = self.env.step(4)       #soft drop
             last_state = state3
             last_reward += reward3
@@ -333,7 +333,7 @@ class Tetris2(gym.Env):
 
         self.action_space = self.env.action_space
         self.observation_space = self.env.observation_space
-        
+
         self.viewer = None
 
         self.last_state = None
@@ -383,10 +383,10 @@ class Tetris2(gym.Env):
         if mode == 'human':
             if self.viewer is None:
                 self.viewer = ImageViewer( caption="Tetris2", height=23*self.image_scale, width=10*self.image_scale)
-            
-            self.viewer.show(draw_state_image())
-            
-            time.sleep(0.3)
+
+            self.viewer.show(self.draw_state_image())
+
+            time.sleep(0.01)
         elif mode == 'detail':
             print("-------------------------------------------------------------")
             print(self.last_state[0])
@@ -401,37 +401,46 @@ class Tetris2(gym.Env):
             time.sleep(0.3)
         else:
             return
-            
-    def draw_state_image():
+
+    def draw_state_image(self):
         COLOR_BLANK = 0
         COLOR_CTRL = 228
         COLOR_BLOCK = 255
-        COLOR_DEAD = 196
-        COLOR_HALF = 128
+        COLOR_DEAD = 194
+        COLOR_HALF = 64
         COLOR_LINE = 64
-        
+        COLOR_BREAK = 32
+
         # grid_ori_detail :  1: blank, 2:line blank, 3: half blank, 4: block, 5: dead blank
-        state_image = np.zeros((23*self.image_scale, 10*self.image_scale, 3))
-        
+        state_image = np.zeros((23*self.image_scale, 10*self.image_scale, 3), dtype=np.uint8)
+
         for i in range(23):
             for j in range(10):
                 for m in range(self.image_scale):
                     for n in range(self.image_scale):
                         for z in range(3):
                             if self.last_state[1, i, j] == 1:
-                                state_image[i+m, j+n, z] = COLOR_BLANK
+                                state_image[i*self.image_scale+m, j*self.image_scale+n, z] = COLOR_BLANK
                             elif self.last_state[1, i, j] == 2:
-                                state_image[i+m, j+n, z] = COLOR_LINE
-                            elif self.last_state[1, i, j] == 3:
-                                state_image[i+m, j+n, z] = COLOR_HALF
+                                state_image[i*self.image_scale+m, j*self.image_scale+n, z] = COLOR_LINE
+                            elif self.last_state[1, i, j] == 3 and z == 0:
+                                state_image[i*self.image_scale+m, j*self.image_scale+n, z] = COLOR_HALF
                             elif self.last_state[1, i, j] == 4:
-                                state_image[i+m, j+n, z] = COLOR_BLOCK
-                            elif self.last_state[1, i, j] == 5:
-                                state_image[i+m, j+n, z] = COLOR_DEAD
-                                
-                            if self.last_state[0, i, j] == 6:
-                                state_image[i+m, j+n, z] = COLOR_CTRL
+                                state_image[i*self.image_scale+m, j*self.image_scale+n, z] = COLOR_BLOCK
+                            elif self.last_state[1, i, j] == 5 and z == 0:
+                                state_image[i*self.image_scale+m, j*self.image_scale+n, z] = COLOR_DEAD
 
+                            if self.last_state[0, i, j] == 6:
+                                state_image[i*self.image_scale+m, j*self.image_scale+n, z] = COLOR_CTRL
+
+                            if self.last_state[1, i, j] != 1 and (m==0 or n==0) :
+                                state_image[i*self.image_scale+m, j*self.image_scale+n, z] = COLOR_BREAK
+
+                            if self.last_state[0, i, j] == 6 and (m==0 or n==0) :
+                                state_image[i*self.image_scale+m, j*self.image_scale+n, z] = COLOR_BREAK
+
+
+        #print(state_image)
         return state_image
 
     def close (self):

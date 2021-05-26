@@ -49,7 +49,7 @@ BZ-Tetris-v0:
 BZ-Tetris2-v0:
   policy: 'MlpPolicy'
   frame_stack: 4
-  n_envs: 8
+  n_envs: 16
   n_timesteps: !!float 2e5
   #create_eval_env: False
 

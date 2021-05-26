@@ -8,7 +8,7 @@ from gym_bz_games.envs.tetris2_ctl import controller
 class TetrisEnv(gym.Env):
 
     def __init__(self):
-        self.action_space = spaces.Discrete(7)
+        self.action_space = spaces.Discrete(6)
         self.observation_space = spaces.Box(low=0, high=2, shape=(29, 10), dtype=np.float32)
         self.controller = controller()
 
@@ -48,8 +48,8 @@ class TetrisEnv(gym.Env):
                     reward += 1
                 height = self.controller.highest()
                 reward -= height * 0.01
-        elif action == 6:
-            self.controller.hold()
+        #elif action == 6:
+        #    self.controller.hold()
 
         obs = np.array(self.controller.get_state(), dtype=np.float32)
 
