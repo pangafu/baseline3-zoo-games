@@ -340,6 +340,7 @@ class Tetris2(gym.Env):
         self.last_reward = 0
         self.last_done = False
         self.last_info = None
+        self.last_info_score = 0
 
         self.max_reward = -100
         self.curr_reward_sum = 0
@@ -353,10 +354,12 @@ class Tetris2(gym.Env):
 
         state, reward, done, info = self.env.step(action)
         self.last_state = state
+        #self.last_reward = reward + (self.last_info_score - info["ori_score"][0])/25.
         self.last_reward = reward
         self.last_done = done
         self.last_info = info
 
+        # self.last_info_score = info["ori_score"][0]
         # reward sum
         self.curr_reward_sum += self.last_reward
 
@@ -373,6 +376,7 @@ class Tetris2(gym.Env):
         self.last_reward = 0
         self.last_done = False
         self.last_info = None
+        self.last_info_score = 0
 
         self.curr_reward_sum = 0
 
@@ -385,6 +389,7 @@ class Tetris2(gym.Env):
                 self.viewer = ImageViewer( caption="Tetris2", height=23*self.image_scale, width=10*self.image_scale)
 
             self.viewer.show(self.draw_state_image())
+            print("Reward  Total:{},  Last:{}".format(self.curr_reward_sum, self.last_reward))
 
             time.sleep(0.01)
         elif mode == 'detail':
