@@ -9,6 +9,7 @@ from gym.spaces.discrete import Discrete
 import random
 from gym_bz_games.envs.tetris2_env import TetrisEnv
 import time
+from nes_py._image_viewer import ImageViewer
 
 
 # Reload gym-tetris env for 10 times.(prevent picture chaos)
@@ -332,6 +333,8 @@ class Tetris2(gym.Env):
 
         self.action_space = self.env.action_space
         self.observation_space = self.env.observation_space
+        
+        self.viewer = None
 
         self.last_state = None
         self.last_reward = 0
@@ -340,6 +343,7 @@ class Tetris2(gym.Env):
 
         self.max_reward = -100
         self.curr_reward_sum = 0
+        self.image_scale = 10
 
 
 
@@ -377,12 +381,11 @@ class Tetris2(gym.Env):
     def render(self, mode='human'):
         # if self.last_reward != 0:
         if mode == 'human':
-            print("-------------------------------------------------------------")
-            print(self.last_state[0])
-            print("Reward  Total:{},  Last:{}".format(self.curr_reward_sum, self.last_reward))
-            print("Info     :grid_score, clear_line_num, line_blank, half_holes, dead_holes, border_height")
-            print("Info  ORI:{} ".format(self.last_info["ori_score"]))
-            print("Info DROP:{}".format(self.last_info["drop_score"]))
+            if self.viewer is None:
+                self.viewer = ImageViewer( caption="Tetris2", height=23*self.image_scale, width=10*self.image_scale)
+            
+            self.viewer.show(draw_state_image())
+            
             time.sleep(0.3)
         elif mode == 'detail':
             print("-------------------------------------------------------------")
@@ -398,8 +401,42 @@ class Tetris2(gym.Env):
             time.sleep(0.3)
         else:
             return
+            
+    def draw_state_image():
+        COLOR_BLANK = 0
+        COLOR_CTRL = 228
+        COLOR_BLOCK = 255
+        COLOR_DEAD = 196
+        COLOR_HALF = 128
+        COLOR_LINE = 64
+        
+        # grid_ori_detail :  1: blank, 2:line blank, 3: half blank, 4: block, 5: dead blank
+        state_image = np.zeros((23*self.image_scale, 10*self.image_scale, 3))
+        
+        for i in range(23):
+            for j in range(10):
+                for m in range(self.image_scale):
+                    for n in range(self.image_scale):
+                        for z in range(3):
+                            if self.last_state[1, i, j] == 1:
+                                state_image[i+m, j+n, z] = COLOR_BLANK
+                            elif self.last_state[1, i, j] == 2:
+                                state_image[i+m, j+n, z] = COLOR_LINE
+                            elif self.last_state[1, i, j] == 3:
+                                state_image[i+m, j+n, z] = COLOR_HALF
+                            elif self.last_state[1, i, j] == 4:
+                                state_image[i+m, j+n, z] = COLOR_BLOCK
+                            elif self.last_state[1, i, j] == 5:
+                                state_image[i+m, j+n, z] = COLOR_DEAD
+                                
+                            if self.last_state[0, i, j] == 6:
+                                state_image[i+m, j+n, z] = COLOR_CTRL
+
+        return state_image
 
     def close (self):
+        if self.viewer is not None:
+            self.viewer.close()
         return self.env.close()
 
     def print_status(self):
