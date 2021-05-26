@@ -54,8 +54,10 @@ class TetrisEnv(gym.Env):
         obs = np.array(self.controller.get_state(), dtype=np.float32)
 
         is_done = self.controller.gameover
+        score = self.controller.score
+        lines = self.controller.lines_deleted_all
 
-        return obs, reward, is_done, {"landed":landed, "fire":fire, "pos":pos}
+        return obs, reward, is_done, {"landed":landed, "fire":fire, "pos":pos, "score":score, "lines": lines}
 
 
     def reset(self):

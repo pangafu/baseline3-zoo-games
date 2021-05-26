@@ -18,7 +18,7 @@ class Tetris2CustomState(gym.Wrapper):
         super(Tetris2CustomState, self).__init__(env)
         self.grid_height = 23
         self.grid_width = 10
-        self.observation_space = spaces.Box(low=0, high=10, shape=(5, self.grid_height, self.grid_width), dtype=np.float32)
+        self.observation_space = spaces.Box(low=0, high=7, shape=(5, self.grid_height, self.grid_width), dtype=np.float32)
 
     def step(self, action):
         state, reward, done, info = self.env.step(action)
@@ -73,32 +73,32 @@ class Tetris2CustomState(gym.Wrapper):
         # grid_info  : 0 none, 7 : info, (line<=6)   8 : score up/ can clear, 9: score down
         pos = self.grid_height - 1
         if drop_grid_score >= ori_grid_score:
-            grid_info[pos, 0] = 8
+            grid_info[pos, 0] = 7
         else:
-            grid_info[pos, 0] = 9
+            grid_info[pos, 0] = 0
 
         if drop_clear_line_num > 0:
-            grid_info[pos, 1] = 8
+            grid_info[pos, 1] = 7
 
         if drop_line_blank > ori_line_blank:
-            grid_info[pos, 2] = 9
+            grid_info[pos, 2] = 0
         else:
-            grid_info[pos, 2] = 8
+            grid_info[pos, 2] = 7
 
         if drop_half_holes > ori_half_holes:
-            grid_info[pos, 3] = 9
+            grid_info[pos, 3] = 0
         else:
-            grid_info[pos, 3] = 8
+            grid_info[pos, 3] = 7
 
         if drop_dead_holes > ori_dead_holes:
-            grid_info[pos, 4] = 9
+            grid_info[pos, 4] = 0
         else:
-            grid_info[pos, 4] = 8
+            grid_info[pos, 4] = 7
 
         if drop_border_height > ori_border_height:
-            grid_info[pos, 5] = 9
+            grid_info[pos, 5] = 0
         else:
-            grid_info[pos, 5] = 8
+            grid_info[pos, 5] = 7
 
         info['ori_score'] = [ori_grid_score, ori_clear_line_num, ori_line_blank, ori_half_holes, ori_dead_holes, ori_border_height]
         info['drop_score'] = [drop_grid_score, drop_clear_line_num, drop_line_blank, drop_half_holes, drop_dead_holes, drop_border_height]
@@ -341,6 +341,8 @@ class Tetris2(gym.Env):
         self.last_done = False
         self.last_info = None
         self.last_info_score = 0
+        self.curr_env_score = 0
+        self.curr_env_lines = 0
 
         self.max_reward = -100
         self.curr_reward_sum = 0
@@ -355,18 +357,29 @@ class Tetris2(gym.Env):
         state, reward, done, info = self.env.step(action)
         self.last_state = state
         #self.last_reward = reward + (self.last_info_score - info["ori_score"][0])/25.
-        self.last_reward = reward
+        #self.last_reward = reward
         self.last_done = done
         self.last_info = info
 
-        # self.last_info_score = info["ori_score"][0]
+        self.last_reward = 0
+        self.last_reward += info["ori_score"][0] - self.last_info_score
+        self.last_info_score = info["ori_score"][0]
+
+        self.last_reward += (info["score"] - self.curr_env_score)/2
+        self.curr_env_score = info["score"]
+
+        self.curr_env_lines = info["lines"]
+
+        if done:
+            self.last_reward -= info["ori_score"][2]*3 + info["ori_score"][3]*2
+
         # reward sum
         self.curr_reward_sum += self.last_reward
 
 
         if self.curr_reward_sum > self.max_reward:
             self.max_reward = self.curr_reward_sum
-            print(">> MAX REWARD : reward:{}".format(self.max_reward))
+            print(">> MAX REWARD : reward:{} lines:{} border:{}".format(self.max_reward, self.curr_env_lines, info["ori_score"][5]))
 
         #self.render()
         return self.last_state, self.last_reward, self.last_done, self.last_info
@@ -377,6 +390,9 @@ class Tetris2(gym.Env):
         self.last_done = False
         self.last_info = None
         self.last_info_score = 0
+
+        self.curr_env_score = 0
+        self.curr_env_lines = 0
 
         self.curr_reward_sum = 0
 
@@ -403,6 +419,7 @@ class Tetris2(gym.Env):
             print("Info     :grid_score, clear_line_num, line_blank, half_holes, dead_holes, border_height")
             print("Info  ORI:{} ".format(self.last_info["ori_score"]))
             print("Info DROP:{}".format(self.last_info["drop_score"]))
+            print("Info Score:{}  Lines:{}".format(self.last_info["score"], self.last_info["lines"]))
             time.sleep(0.3)
         else:
             return

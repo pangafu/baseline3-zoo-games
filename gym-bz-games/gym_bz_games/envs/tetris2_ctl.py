@@ -147,6 +147,7 @@ class controller:
         self.dropping_mino = controller.minos[random.randint(1, 7)] 
         self.next_minos = [] # 1 ~ 7
         self.score = 0
+        self.lines_deleted_all = 0
         self.hold_mino_id = None # 1 ~ 7
         self.last_move_is_rotate = False
         self.ren = 0
@@ -278,6 +279,7 @@ class controller:
                 
 
         lines_deleted = len(y_list)
+        self.lines_deleted_all += lines_deleted
         if lines_deleted == 0:
             self.last_deleted = False
             self.ren = 0
@@ -316,7 +318,7 @@ class controller:
             if self.field[22] == [0 for i in range(10)]:
                 all_deleted = 4
             
-            print(">> CLEAR LINE:{}".format(self.score_text))
+            print(">> CLEAR LINE:{}  Score:{}  Lines:{}  Clear:{}".format(self.score_text, self.score, self.lines_deleted_all, lines_deleted))
             return basis + btb + self.ren + all_deleted, x_list, perfect_landed, pos
 
 
