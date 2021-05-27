@@ -412,7 +412,7 @@ class Tetris2(gym.Env):
             #if self.last_reward != 0:
             #    print("Reward  Total:{},  Last:{}".format(self.curr_reward_sum, self.last_reward))
 
-            time.sleep(0.01)
+            #time.sleep(0.01)
         elif mode == 'detail':
             print("-------------------------------------------------------------")
             print(self.last_state[0])
