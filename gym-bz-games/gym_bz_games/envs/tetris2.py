@@ -348,6 +348,12 @@ class Tetris2(gym.Env):
         self.curr_reward_sum = 0
         self.image_scale = 10
 
+        if need_record:
+            self.recorder = RecorderVideoTool(env, saved_path=os.path.join("videoes", bz_record_algo, "Tetris2-v0.gif"))
+        self.has_recorded = False
+        self.need_record = need_record
+        self.min_record_length = 10
+
 
 
     def step(self, action):
@@ -385,7 +391,9 @@ class Tetris2(gym.Env):
             self.max_reward = self.curr_reward_sum
             print(">> MAX REWARD : reward:{} lines:{} border:{} used:{}".format(self.max_reward, self.curr_env_lines, info["ori_score"][5], info["used"]))
 
-        #self.render()
+        if self.need_record and not self.has_recorded:
+            self.recorder.record(self.draw_state_image())
+
         return self.last_state, self.last_reward, self.last_done, self.last_info
 
     def reset(self):
@@ -399,7 +407,15 @@ class Tetris2(gym.Env):
         self.curr_env_lines = 0
 
         self.curr_reward_sum = 0
-
+        
+        if self.need_record and not self.has_recorded:
+            if self.recorder.record_length > self.min_record_length:
+                self.has_recorded = True
+                self.recorder.save()
+            else:
+                self.recorder.reset()
+                print("Recoard frame is {} (< {}), continue recording!".format(self.recorder.record_length, self.min_record_length))
+            
         return self.last_state
 
     def render(self, mode='human'):

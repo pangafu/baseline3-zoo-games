@@ -9,51 +9,65 @@ import random
 from PIL import Image, ImageDraw
 
 
+class RecorderVideoTools():
+    def __init__(self, saved_path):
+        super(RecorderVideoTools, self).__init__()
+
+        self.saved_path = saved_path
+        self.record_video = []
+        self.record_length = 0
+
+    def reset(self):
+        self.record_video = []
+        self.record_length = 0
+
+    def save(self):
+        print("Recoard video to {}, total frame is {}".format(self.saved_path, self.record_length))
+
+        if os.path.exists(self.saved_path):
+            os.remove(self.saved_path)
+
+        (save_path_dir,save_path_file) = os.path.split(self.saved_path)
+
+        if  not os.path.exists(save_path_dir):
+            os.makedirs(save_path_dir)
+
+        self.record_video[0].save(self.saved_path, save_all=True, append_images=self.record_video[1:], optimize=True, duration=20, loop=0)
+
+
+    def record(self, image_array):
+        img = Image.fromarray(image_array, 'RGB')
+        self.record_video.append(img)
+        self.record_length += 1
+
+
 
 class RecorderVideo(gym.Wrapper):
     def __init__(self, env, saved_path, min_record_length = 20):
         super(RecorderVideo, self).__init__(env)
         self.has_recorded = False
-        self.record_length = 0
         self.min_record_length = min_record_length
-        self.record_height = self.observation_space.shape[0]
-        self.record_width = self.observation_space.shape[1]
-        self.saved_path = saved_path
-
-        self.record_video = []
-
+        self.recorder = RecorderVideoTools(saved_path)
 
     def step(self, action) -> GymStepReturn:
         state, reward, done, info = self.env.step(action)
         return self.record(state), reward, done, info
 
     def reset(self):
-        if not self.has_recorded and self.record_length > self.min_record_length:
-            self.has_recorded = True
-            print("Recoard video to {}, total frame is {}".format(self.saved_path, self.record_length))
-
-            if os.path.exists(self.saved_path):
-                os.remove(self.saved_path)
-
-            (save_path_dir,save_path_file) = os.path.split(self.saved_path)
-
-            if  not os.path.exists(save_path_dir):
-                os.makedirs(save_path_dir)
-
-            self.record_video[0].save(self.saved_path, save_all=True, append_images=self.record_video[1:], optimize=True, duration=20, loop=0)
-
-        elif not self.has_recorded:
-            self.record_length = 0
-            print("Recoard frame is {} (< {}), continue recording!".format(self.record_length, self.min_record_length))
+        if not self.has_recorded:
+            if self.recorder.record_length > self.min_record_length:
+                self.has_recorded = True
+                self.recorder.save()
+            else:
+                self.recorder.reset()
+                print("Recoard frame is {} (< {}), continue recording!".format(self.recorder.record_length, self.min_record_length))
 
         return self.record(self.env.reset())
 
 
     def record(self, image_array):
         if not self.has_recorded:
-            img = Image.fromarray(image_array, 'RGB')
-            self.record_video.append(img)
-            self.record_length += 1
+            self.recorder.record(image_array)
 
         return image_array
 
