@@ -8,6 +8,7 @@ from gym.spaces import Box
 from gym.spaces.discrete import Discrete
 import random
 from gym_bz_games.envs.tetris2_env import TetrisEnv
+from gym_bz_games.wrappers import RecorderVideoTools
 import time
 from nes_py._image_viewer import ImageViewer
 
@@ -349,7 +350,7 @@ class Tetris2(gym.Env):
         self.image_scale = 10
 
         if need_record:
-            self.recorder = RecorderVideoTool(env, saved_path=os.path.join("videoes", bz_record_algo, "Tetris2-v0.gif"))
+            self.recorder = RecorderVideoTools(saved_path=os.path.join("videoes", bz_record_algo, "Tetris2-v0.gif"))
         self.has_recorded = False
         self.need_record = need_record
         self.min_record_length = 10
@@ -407,7 +408,7 @@ class Tetris2(gym.Env):
         self.curr_env_lines = 0
 
         self.curr_reward_sum = 0
-        
+
         if self.need_record and not self.has_recorded:
             if self.recorder.record_length > self.min_record_length:
                 self.has_recorded = True
@@ -415,7 +416,7 @@ class Tetris2(gym.Env):
             else:
                 self.recorder.reset()
                 print("Recoard frame is {} (< {}), continue recording!".format(self.recorder.record_length, self.min_record_length))
-            
+
         return self.last_state
 
     def render(self, mode='human'):

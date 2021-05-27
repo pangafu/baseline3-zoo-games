@@ -1,1 +1,1 @@
-./record.sh ppo BZ-Tetris-v0
+./record.sh ppo BZ-Tetris2-v0

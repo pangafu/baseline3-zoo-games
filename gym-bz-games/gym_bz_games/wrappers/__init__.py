@@ -3,7 +3,7 @@ from .common import (
     CustomSkipFrame,
     RandomStart,
     RecorderVideo,
-    RecorderVideoTool,
+    RecorderVideoTools,
 )
 
 from .nesframe import (
