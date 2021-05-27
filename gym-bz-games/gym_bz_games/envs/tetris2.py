@@ -283,7 +283,7 @@ class Tetris2Movedown(gym.Wrapper):
 
 
         # every 2 frame soft drop once
-        if action != 4 and action != 5 and self.curr_frame % 2  and not last_done:
+        if action != 4 and action != 5 and self.curr_frame % 3 == 0  and not last_done:
             state2, reward2, done2, info2 = self.env.step(4)       #soft drop
             last_state = state2
             last_reward += reward2
@@ -291,7 +291,7 @@ class Tetris2Movedown(gym.Wrapper):
             last_info = info2
 
         # every 10 frame soft drop twice to prevent loop
-        if action != 4 and action != 5 and self.curr_frame % 5  and not last_done:
+        if action != 4 and action != 5 and self.curr_frame % 7 == 0  and not last_done:
             state3, reward3, done3, info3 = self.env.step(4)       #soft drop
             last_state = state3
             last_reward += reward3
