@@ -283,7 +283,7 @@ class Tetris2Movedown(gym.Wrapper):
 
 
         # every 2 frame soft drop once
-        if action != 4 and action != 5 and self.curr_frame % 3 == 0  and not last_done:
+        if action != 4 and action != 5 and self.curr_frame % 2 == 0  and not last_done:
             state2, reward2, done2, info2 = self.env.step(4)       #soft drop
             last_state = state2
             last_reward += reward2
@@ -291,7 +291,7 @@ class Tetris2Movedown(gym.Wrapper):
             last_info = info2
 
         # every 10 frame soft drop twice to prevent loop
-        if action != 4 and action != 5 and self.curr_frame % 7 == 0  and not last_done:
+        if action != 4 and action != 5 and self.curr_frame % 5 == 0  and not last_done:
             state3, reward3, done3, info3 = self.env.step(4)       #soft drop
             last_state = state3
             last_reward += reward3
@@ -370,7 +370,11 @@ class Tetris2(gym.Env):
 
         self.curr_env_lines = info["lines"]
 
-        if done:
+        if info["ori_score"][5] - self.curr_env_lines - info["used"]/10. >= 7:
+            done = True
+            self.last_done = True
+
+        if self.last_done:
             self.last_reward -= info["ori_score"][2]*3 + info["ori_score"][3]*2
 
         # reward sum
@@ -379,7 +383,7 @@ class Tetris2(gym.Env):
 
         if self.curr_reward_sum > self.max_reward:
             self.max_reward = self.curr_reward_sum
-            print(">> MAX REWARD : reward:{} lines:{} border:{}".format(self.max_reward, self.curr_env_lines, info["ori_score"][5]))
+            print(">> MAX REWARD : reward:{} lines:{} border:{} used:{}".format(self.max_reward, self.curr_env_lines, info["ori_score"][5], info["used"]))
 
         #self.render()
         return self.last_state, self.last_reward, self.last_done, self.last_info

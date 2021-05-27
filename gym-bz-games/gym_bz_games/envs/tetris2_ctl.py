@@ -148,6 +148,7 @@ class controller:
         self.next_minos = [] # 1 ~ 7
         self.score = 0
         self.lines_deleted_all = 0
+        self.total_used = 0
         self.hold_mino_id = None # 1 ~ 7
         self.last_move_is_rotate = False
         self.ren = 0
@@ -167,7 +168,9 @@ class controller:
         self.next_minos_update()
         self.last_move_is_rotate = False
         self.hold_used = False
+        self.total_used += 1
         self.check_gameover()
+
         if not self.gameover:
             for i in range(random.randint(1, 4)):
                 self.rotate(1)
