@@ -5,9 +5,9 @@ BZ-Mario-v0: &BZ-Mario-v0
   n_timesteps: !!float 1e9
   batch_size: 128
   n_steps: 512
-  gamma: 0.95  
+  gamma: 0.975
   #0.99
-  gae_lambda: 0.8
+  gae_lambda: 0.9
   #0.8  
   n_epochs: 20
   ent_coef: 0.0
@@ -50,8 +50,21 @@ BZ-Tetris2-v0:
   policy: 'MlpPolicy'
   frame_stack: 4
   n_envs: 16
-  n_timesteps: !!float 2e5
-  #create_eval_env: False
+  n_timesteps: !!float 1e9
+  batch_size: 512
+  n_steps: 512
+  gamma: 0.975
+  learning_rate: !!float 3e-5
+  ent_coef: 1.312836252706057e-05
+  clip_range: 0.1
+  n_epochs: 20
+  gae_lambda: 0.925
+  max_grad_norm: 0.5
+  vf_coef: 0.5
+
+  policy_kwargs: "dict(activation_fn=nn.Tanh,
+                       net_arch=[dict(pi=[256, 512, 512, 256], vf=[256, 512, 512, 256])]
+                       )"
 
 
 

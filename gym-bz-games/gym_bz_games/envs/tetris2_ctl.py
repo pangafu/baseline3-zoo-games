@@ -168,6 +168,10 @@ class controller:
         self.last_move_is_rotate = False
         self.hold_used = False
         self.check_gameover()
+        if not self.gameover:
+            for i in range(random.randint(1, 4)):
+                self.rotate(1)
+
     
     def check_gameover(self):
         if sum(self.field[1]) > 0:

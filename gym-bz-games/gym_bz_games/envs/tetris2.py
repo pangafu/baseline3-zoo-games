@@ -405,7 +405,8 @@ class Tetris2(gym.Env):
                 self.viewer = ImageViewer( caption="Tetris2", height=23*self.image_scale, width=10*self.image_scale)
 
             self.viewer.show(self.draw_state_image())
-            print("Reward  Total:{},  Last:{}".format(self.curr_reward_sum, self.last_reward))
+            #if self.last_reward != 0:
+            #    print("Reward  Total:{},  Last:{}".format(self.curr_reward_sum, self.last_reward))
 
             time.sleep(0.01)
         elif mode == 'detail':
