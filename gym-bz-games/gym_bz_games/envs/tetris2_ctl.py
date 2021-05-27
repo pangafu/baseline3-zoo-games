@@ -143,6 +143,7 @@ class controller:
     # last_deleted is whether any line was deleted at last round
     # btb_ready is wheter last deletion was either t-spin or tetris
     def __init__(self):
+        random.seed()
         self.field = [[0 for i in range(10)] for j in range(23)]
         self.dropping_mino = controller.minos[random.randint(1, 7)] 
         self.next_minos = [] # 1 ~ 7

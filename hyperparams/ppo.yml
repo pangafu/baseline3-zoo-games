@@ -3,7 +3,7 @@ BZ-Mario-v0: &BZ-Mario-v0
   frame_stack: 4
   n_envs: 8
   n_timesteps: !!float 1e9
-  batch_size: 128
+  batch_size: 256
   n_steps: 512
   gamma: 0.975
   #0.99
@@ -16,8 +16,8 @@ BZ-Mario-v0: &BZ-Mario-v0
   vf_coef: 0.5
   learning_rate: !!float 1e-4
   #use_sde: True
-  #clip_range: 0.4
-  #clip_range_vf: 0.4
+  clip_range: 0.4
+  clip_range_vf: 0.4
   #create_eval_env: True
 
   policy_kwargs: "dict(activation_fn=nn.ReLU,

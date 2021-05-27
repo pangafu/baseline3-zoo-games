@@ -85,6 +85,7 @@ class CustomReward(gym.Wrapper):
         if done:
             if info["flag_get"]:
                 reward += 200
+                print(">> FLAG GET!!! : reward:{}  score:{}  coin:{}  status:{}  x:{}".format(self.max_reward, self.curr_score, self.curr_coins, self.curr_status, self.curr_x))
             else:
                 reward -= 10
 
