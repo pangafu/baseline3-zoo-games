@@ -365,7 +365,7 @@ class Tetris2(gym.Env):
         self.last_reward += info["ori_score"][0] - self.last_info_score
         self.last_info_score = info["ori_score"][0]
 
-        self.last_reward += (info["score"] - self.curr_env_score)/2
+        self.last_reward += (info["score"] - self.curr_env_score)/1
         self.curr_env_score = info["score"]
 
         self.curr_env_lines = info["lines"]
