@@ -24,15 +24,15 @@ https://github.com/pangafu/baseline3-zoo-games-logs
     git clone https://github.com/pangafu/baseline3-zoo-games-logs.git
     
 # Train
-    ./scripts/train.mario.sh
+    ./scripts/train.ppo.mario.sh
     
     
 # Test
-    ./scripts/test.mario.sh
+    ./scripts/test.ppo.mario.sh
     
     
 # Clear (clear all trained model, beware to use!)
-    ./scripts/test.mario.sh
+    ./scripts/test.ppo.mario.sh
     
 # Result
 |  Game            | PPO  | QRDQN |
