@@ -354,6 +354,7 @@ class Tetris2(gym.Env):
         self.has_recorded = False
         self.need_record = need_record
         self.min_record_length = 10
+        self.record_done = False
 
 
 
@@ -395,6 +396,8 @@ class Tetris2(gym.Env):
         if self.need_record and not self.has_recorded:
             self.recorder.record(self.draw_state_image())
 
+        self.record_done = (self.curr_env_lines > 10)
+
         return self.last_state, self.last_reward, self.last_done, self.last_info
 
     def reset(self):
@@ -410,12 +413,12 @@ class Tetris2(gym.Env):
         self.curr_reward_sum = 0
 
         if self.need_record and not self.has_recorded:
-            if self.recorder.record_length > self.min_record_length:
+            if self.recorder.record_length > self.min_record_length and self.record_done:
                 self.has_recorded = True
                 self.recorder.save()
             else:
                 self.recorder.reset()
-                print("Recoard frame is {} (< {}), continue recording!".format(self.recorder.record_length, self.min_record_length))
+                print("Record frame is {} ( Min Length {}), Record Done is {}, continue recording!".format(self.recorder.record_length, self.min_record_length, self.last_done))
 
         return self.last_state
 

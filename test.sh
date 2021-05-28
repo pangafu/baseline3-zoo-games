@@ -20,6 +20,8 @@ while true; do
   echo ""
 
   export BZ_TEST=1
+  export BZ_RECORD=1
+  export BZ_RECORD_ALGO=ppo
 
   python baselines3-zoo/enjoy.py --algo $1 --env $2 --folder logs/ --num-threads 1 --n-envs 1 -n 2000 --load-checkpoint-last
 
@@ -37,6 +39,9 @@ while true; do
   python baselines3-zoo/enjoy.py --algo $1 --env $2 --folder logs/ --num-threads 1 --n-envs 1 -n 2000 --load-best
 
   unset BZ_TEST
+  unset BZ_RECORD_ALGO
+  unset BZ_RECORD
+
   echo ""
   echo ">>>> TEST BEST END - "
 
