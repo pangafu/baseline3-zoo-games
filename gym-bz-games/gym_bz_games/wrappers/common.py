@@ -43,38 +43,6 @@ class RecorderVideoTools():
 
 
 
-class RecorderVideo(gym.Wrapper):
-    def __init__(self, env, saved_path, min_record_length = 20):
-        super(RecorderVideo, self).__init__(env)
-        self.has_recorded = False
-        self.min_record_length = min_record_length
-        self.recorder = RecorderVideoTools(saved_path)
-        self.record_done = False
-
-    def step(self, action) -> GymStepReturn:
-        state, reward, done, info = self.env.step(action)
-        self.record_done = done
-        return self.record(state), reward, done, info
-
-    def reset(self):
-        if not self.has_recorded:
-            if self.recorder.record_length > self.min_record_length and self.last_done:
-                self.has_recorded = True
-                self.recorder.save()
-            else:
-                self.recorder.reset()
-                print("Record frame is {} ( Min Length {}), Record Done is {}, continue recording!".format(self.recorder.record_length, self.min_record_length, self.last_done))
-
-        self.last_done = False
-        return self.record(self.env.reset())
-
-
-    def record(self, image_array):
-        if not self.has_recorded:
-            self.recorder.record(image_array)
-
-        return image_array
-
 
 class CustomSkipFrame(gym.Wrapper):
     def __init__(self, env, skip=4):

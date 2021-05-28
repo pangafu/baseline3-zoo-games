@@ -6,8 +6,41 @@ from gym import spaces
 from nes_py.wrappers import JoypadSpace
 from gym_super_mario_bros.actions import SIMPLE_MOVEMENT
 from stable_baselines3.common.type_aliases import GymObs, GymStepReturn
-from gym_bz_games.wrappers import CustomSkipFrame, NesFrameGray, NesFrameGrayHalf, RandomStart, RecorderVideo
+from gym_bz_games.wrappers import CustomSkipFrame, NesFrameGray, NesFrameGrayHalf, RandomStart, RecorderVideoTools
 import gym_super_mario_bros
+
+
+class RecorderVideo(gym.Wrapper):
+    def __init__(self, env, saved_path, min_record_length = 20):
+        super(RecorderVideo, self).__init__(env)
+        self.has_recorded = False
+        self.min_record_length = min_record_length
+        self.recorder = RecorderVideoTools(saved_path)
+        self.record_done = False
+
+    def step(self, action) -> GymStepReturn:
+        state, reward, done, info = self.env.step(action)
+        self.record_done = info["flag_get"]
+        return self.record(state), reward, done, info
+
+    def reset(self):
+        if not self.has_recorded:
+            if self.recorder.record_length > self.min_record_length and self.record_done:
+                self.has_recorded = True
+                self.recorder.save()
+            else:
+                print("Record frame is {} ( Min Length {}), Record Done is {}, continue recording!".format(self.recorder.record_length, self.min_record_length, self.record_done))
+                self.recorder.reset()
+
+        self.last_done = False
+        return self.record(self.env.reset())
+
+
+    def record(self, image_array):
+        if not self.has_recorded:
+            self.recorder.record(image_array)
+
+        return image_array
 
 
 class CustomReward(gym.Wrapper):
