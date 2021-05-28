@@ -417,7 +417,8 @@ class Tetris2(gym.Env):
                 self.has_recorded = True
                 self.recorder.save()
             else:
-                print("Record frame is {} ( Min Length {}), Record Done is {}, continue recording!".format(self.recorder.record_length, self.min_record_length, self.record_done))
+                if self.recorder.record_length > self.min_record_length:
+                    print("Record frame is {} ( Min Length {}), Record Done is {}, continue recording!".format(self.recorder.record_length, self.min_record_length, self.record_done))
                 self.recorder.reset()
 
         return self.last_state

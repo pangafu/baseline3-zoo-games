@@ -24,7 +24,7 @@ class RecorderVideo(gym.Wrapper):
 
     def step(self, action) -> GymStepReturn:
         state, reward, done, info = self.env.step(action)
-        self.record_done = done
+        self.record_done = (info["number_of_lines"] > 10)
         return self.record(state), reward, done, info
 
     def reset(self):
@@ -33,7 +33,8 @@ class RecorderVideo(gym.Wrapper):
                 self.has_recorded = True
                 self.recorder.save()
             else:
-                print("Record frame is {} ( Min Length {}), Record Done is {}, continue recording!".format(self.recorder.record_length, self.min_record_length, self.record_done))
+                if self.recorder.record_length > self.min_record_length:
+                    print("Record frame is {} ( Min Length {}), Record Done is {}, continue recording!".format(self.recorder.record_length, self.min_record_length, self.record_done))
                 self.recorder.reset()
 
         self.last_done = False
