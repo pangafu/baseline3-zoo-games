@@ -377,7 +377,7 @@ class Tetris2(gym.Env):
 
         self.curr_env_lines = info["lines"]
 
-        if info["ori_score"][5] - self.curr_env_lines - info["used"]/10. >= 7:
+        if info["ori_score"][5] - self.curr_env_lines - info["used"]/10. >= 11:
             done = True
             self.last_done = True
 
