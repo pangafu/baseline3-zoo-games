@@ -3,7 +3,6 @@ BZ-Mario-v0: &BZ-Mario-v0
   frame_stack: 4
   n_envs: 8
   n_timesteps: !!float 1e9
-  batch_size: 256
   n_epochs: 20
   ent_coef: 0.0
   sde_sample_freq: 4
@@ -17,18 +16,21 @@ BZ-Mario-v0: &BZ-Mario-v0
   #gae_lambda: 0.8
   #learning_rate: !!float 1e-4
   #n_steps: 768
+  #batch_size: 128
 
   # train center 
   #gamma: 0.95
   #gae_lambda: 0.9
   #learning_rate: !!float 3e-5
   #n_steps: 1024
+  #batch_size: 256
 
   # train end
   gamma: 0.995
   gae_lambda: 0.99
   learning_rate: !!float 1e-5
-  n_steps: 1024
+  n_steps: 1280
+  batch_size: 384
 
   policy_kwargs: "dict(activation_fn=nn.ReLU,
                        net_arch=[dict(pi=[256, 512, 512, 256], vf=[256, 512, 512, 256])]
@@ -52,19 +54,22 @@ BZ-Tetris2-v0:
   #gamma: 0.95
   #gae_lambda: 0.9
   #learning_rate: !!float 5e-5
-  #n_steps: 512
+  #n_steps: 384
+  #batch_size: 384
 
   # train center
   #gamma: 0.98
   #gae_lambda: 0.94
   #learning_rate: !!float 2.5e-5
   #n_steps: 512
+  #batch_size: 512
 
   # train end
   gamma: 0.995
   gae_lambda: 0.99
   learning_rate: !!float 1e-5
-  n_steps: 512
+  n_steps: 768
+  batch_size: 768
 
 
   policy_kwargs: "dict(activation_fn=nn.Tanh,
