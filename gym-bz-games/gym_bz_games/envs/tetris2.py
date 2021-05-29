@@ -396,7 +396,7 @@ class Tetris2(gym.Env):
         if self.need_record and not self.has_recorded:
             self.recorder.record(self.draw_state_image())
 
-        self.record_done = (self.curr_env_lines > 10)
+        self.record_done = (self.curr_env_lines > 14)
 
         return self.last_state, self.last_reward, self.last_done, self.last_info
 
