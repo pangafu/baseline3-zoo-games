@@ -39,7 +39,8 @@ https://github.com/pangafu/baseline3-zoo-games-logs
 # Result
 |  Game            | PPO  | QRDQN |
 | ---------------  | ---- |  ---- | 
-| BZ-Mario-1-1-v0  | pass |  - |
+| BZ-Tetris2-v0  | [well](https://github.com/pangafu/baseline3-zoo-games-logs/tree/main/ppo/BZ-Tetris2-v0_1/) |  - |
+| BZ-Mario-1-1-v0  | [pass](https://github.com/pangafu/baseline3-zoo-games-logs/tree/main/ppo/BZ-Mario-1-1-v0_1) |  - |
 | BZ-Mario-1-2-v0  | - |  - |
 | BZ-Mario-1-3-v0  | - |  - |
 | BZ-Mario-1-4-v0  | - |  - |
@@ -71,7 +72,6 @@ https://github.com/pangafu/baseline3-zoo-games-logs
 | BZ-Mario-8-2-v0  | - |  - |
 | BZ-Mario-8-3-v0  | - |  - |
 | BZ-Mario-8-4-v0  | - |  - |
-| BZ-Tetris2-v0  | well |  - |
 
 # Citing the Project
 To cite this repository in publications:
