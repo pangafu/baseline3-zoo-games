@@ -310,7 +310,7 @@ class Tetris2Movedown(gym.Wrapper):
 
 # The last wrapped env
 class Tetris2(gym.Env):
-    metadata = {'render.modes':['human']}
+    metadata = {'render.modes':['none', 'human', 'detail']}
 
     def __init__(self):
         need_record = False
@@ -425,7 +425,7 @@ class Tetris2(gym.Env):
 
     def render(self, mode='human'):
         # if self.last_reward != 0:
-        if mode == 'human':
+        if mode == 'human1':
             if self.viewer is None:
                 self.viewer = ImageViewer( caption="Tetris2", height=23*self.image_scale, width=10*self.image_scale)
 
@@ -434,6 +434,9 @@ class Tetris2(gym.Env):
             #    print("Reward  Total:{},  Last:{}".format(self.curr_reward_sum, self.last_reward))
 
             #time.sleep(0.01)
+        elif mode == 'none':
+            pass
+
         elif mode == 'detail':
             print("-------------------------------------------------------------")
             print(self.last_state[0])
@@ -446,7 +449,7 @@ class Tetris2(gym.Env):
             print("Info  ORI:{} ".format(self.last_info["ori_score"]))
             print("Info DROP:{}".format(self.last_info["drop_score"]))
             print("Info Score:{}  Lines:{}".format(self.last_info["score"], self.last_info["lines"]))
-            time.sleep(0.3)
+            time.sleep(0.1)
         else:
             return
 
