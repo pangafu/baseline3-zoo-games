@@ -8,6 +8,8 @@ https://github.com/pangafu/baseline3-zoo-games-videoes
 ## PPO - Super Mario Bros.
 ![ppo_SuperMarioBros-1-1](https://github.com/pangafu/baseline3-zoo-games-videoes/raw/main/ppo/SuperMarioBros-1-1-v0.gif)
 
+## PPO - Tetris2
+![ppo - Tetris2](https://github.com/pangafu/baseline3-zoo-games-videoes/raw/main/ppo/Tetris2-v0.gif)
 
 # models
 All modeles put in
@@ -37,7 +39,7 @@ https://github.com/pangafu/baseline3-zoo-games-logs
 # Result
 |  Game            | PPO  | QRDQN |
 | ---------------  | ---- |  ---- | 
-| BZ-Mario-1-1-v0  | ok |  - |
+| BZ-Mario-1-1-v0  | pass |  - |
 | BZ-Mario-1-2-v0  | - |  - |
 | BZ-Mario-1-3-v0  | - |  - |
 | BZ-Mario-1-4-v0  | - |  - |
@@ -69,7 +71,7 @@ https://github.com/pangafu/baseline3-zoo-games-logs
 | BZ-Mario-8-2-v0  | - |  - |
 | BZ-Mario-8-3-v0  | - |  - |
 | BZ-Mario-8-4-v0  | - |  - |
-| BZ-Tetris-v0  | - |  - |
+| BZ-Tetris2-v0  | well |  - |
 
 # Citing the Project
 To cite this repository in publications:
