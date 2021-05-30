@@ -20,7 +20,11 @@ class RecorderVideo(gym.Wrapper):
 
     def step(self, action) -> GymStepReturn:
         state, reward, done, info = self.env.step(action)
+
         self.record_done = info["flag_get"]
+        # self.record_done = info["x_pos"] > 2850
+        if self.record_done:
+           done = True
         return self.record(state), reward, done, info
 
     def reset(self):
