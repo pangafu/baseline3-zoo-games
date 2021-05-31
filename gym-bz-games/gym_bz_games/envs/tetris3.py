@@ -14,12 +14,12 @@ from nes_py._image_viewer import ImageViewer
 
 
 # Reload gym-tetris env for 10 times.(prevent picture chaos)
-class Tetris2CustomState(gym.Wrapper):
+class Tetris3CustomState(gym.Wrapper):
     def __init__(self, env):
-        super(Tetris2CustomState, self).__init__(env)
+        super(Tetris3CustomState, self).__init__(env)
         self.grid_height = 23
         self.grid_width = 10
-        self.observation_space = spaces.Box(low=0, high=7, shape=(5, self.grid_height, self.grid_width), dtype=np.float32)
+        self.observation_space = spaces.Box(low=0, high=7, shape=(4, self.grid_height, self.grid_width), dtype=np.float32)
 
     def step(self, action):
         state, reward, done, info = self.env.step(action)
@@ -72,6 +72,7 @@ class Tetris2CustomState(gym.Wrapper):
         drop_grid_score, drop_clear_line_num, drop_line_blank, drop_half_holes, drop_dead_holes, drop_border_height = self.computer_detail(grid_drop_detail)
 
         # grid_info  : 0 none, 7 : info, (line<=6)   8 : score up/ can clear, 9: score down
+        '''
         pos = self.grid_height - 1
         if drop_grid_score >= ori_grid_score:
             grid_info[pos, 0] = 7
@@ -101,11 +102,14 @@ class Tetris2CustomState(gym.Wrapper):
         else:
             grid_info[pos, 5] = 7
 
+        '''
+
         info['ori_score'] = [ori_grid_score, ori_clear_line_num, ori_line_blank, ori_half_holes, ori_dead_holes, ori_border_height]
         info['drop_score'] = [drop_grid_score, drop_clear_line_num, drop_line_blank, drop_half_holes, drop_dead_holes, drop_border_height]
 
         #return state
-        return np.array((grid_ori, grid_ori_detail, grid_drop, grid_drop_detail, grid_info))
+        #return np.array((grid_ori, grid_ori_detail, grid_drop, grid_drop_detail, grid_info))
+        return np.array((grid_ori, grid_ori_detail, grid_drop, grid_drop_detail))
 
 
     # grid_drop    : 1: blank, 4: block, 6: control
@@ -268,9 +272,9 @@ class Tetris2CustomState(gym.Wrapper):
         return grid_score, clear_line_num, line_blank, half_holes, dead_holes, border_height
 
 # drop down the tetris (origin not drop with step)
-class Tetris2Movedown(gym.Wrapper):
+class Tetris3Movedown(gym.Wrapper):
     def __init__(self, env):
-        super(Tetris2Movedown, self).__init__(env)
+        super(Tetris3Movedown, self).__init__(env)
         self.curr_frame = 0
 
     def step(self, action):
@@ -309,8 +313,8 @@ class Tetris2Movedown(gym.Wrapper):
 
 
 # The last wrapped env
-class Tetris2(gym.Env):
-    metadata = {'render.modes':['human', 'none', 'human', 'detail']}
+class Tetris3(gym.Env):
+    metadata = {'render.modes':['none', 'human', 'detail']}
 
     def __init__(self):
         need_record = False
@@ -329,8 +333,8 @@ class Tetris2(gym.Env):
 
         #init
         self.env = TetrisEnv()
-        self.env = Tetris2Movedown(self.env)
-        self.env = Tetris2CustomState(self.env)
+        self.env = Tetris3Movedown(self.env)
+        self.env = Tetris3CustomState(self.env)
 
         self.action_space = self.env.action_space
         self.observation_space = self.env.observation_space
@@ -350,7 +354,7 @@ class Tetris2(gym.Env):
         self.image_scale = 10
 
         if need_record:
-            self.recorder = RecorderVideoTools(saved_path=os.path.join("videoes", bz_record_algo, "Tetris2-v0.gif"))
+            self.recorder = RecorderVideoTools(saved_path=os.path.join("videoes", bz_record_algo, "Tetris3-v0.gif"))
         self.has_recorded = False
         self.need_record = need_record
         self.min_record_length = 10
@@ -425,9 +429,9 @@ class Tetris2(gym.Env):
 
     def render(self, mode='human'):
         # if self.last_reward != 0:
-        if mode == 'human':
+        if mode == 'human1':
             if self.viewer is None:
-                self.viewer = ImageViewer( caption="Tetris2", height=23*self.image_scale, width=10*self.image_scale)
+                self.viewer = ImageViewer( caption="Tetris3", height=23*self.image_scale, width=10*self.image_scale)
 
             self.viewer.show(self.draw_state_image())
             #if self.last_reward != 0:
@@ -443,7 +447,7 @@ class Tetris2(gym.Env):
             print(self.last_state[1])
             print(self.last_state[2])
             print(self.last_state[3])
-            print(self.last_state[4])
+            #print(self.last_state[4])
             print("Reward  Total:{},  Last:{}".format(self.curr_reward_sum, self.last_reward))
             print("Info     :grid_score, clear_line_num, line_blank, half_holes, dead_holes, border_height")
             print("Info  ORI:{} ".format(self.last_info["ori_score"]))

@@ -1,1 +1,1 @@
-./test.sh ppo BZ-Tetris2-v0
+./test.sh ppo BZ-Tetris3-v0

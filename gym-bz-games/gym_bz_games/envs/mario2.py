@@ -137,7 +137,7 @@ class CustomReward(gym.Wrapper):
         if done:
             if info["flag_get"]:
                 reward += 200
-                print(">> FLAG GET!!! : reward:{}  score:{}  coin:{}  status:{}  x:{}".format(self.max_reward, self.curr_score, self.curr_coins, self.curr_status, self.curr_x))
+                print(">> FLAG GET!!! : world:{} stage:{} reward:{}  score:{}  coin:{}  status:{}  x:{}".format(self.world, self.stage, self.max_reward, self.curr_score, self.curr_coins, self.curr_status, self.curr_x))
             else:
                 reward -= 20
 
@@ -145,7 +145,8 @@ class CustomReward(gym.Wrapper):
 
         if self.curr_reward_sum > self.max_reward:
             self.max_reward = self.curr_reward_sum
-            print(">> MAX REWARD : reward:{}  score:{}  coin:{}  status:{}  x:{}".format(self.max_reward, self.curr_score, self.curr_coins, self.curr_status, self.curr_x))
+            if self.max_reward % 20 == 0:
+                print(">> MAX REWARD : reward:{}  score:{}  coin:{}  status:{}  x:{}".format(self.max_reward, self.curr_score, self.curr_coins, self.curr_status, self.curr_x))
 
 
         return state, reward, done, info
@@ -185,7 +186,7 @@ class MarioRandom(gym.Env):
         env = CustomSkipFrame(env, skip = 2)
 
         if self.need_record:
-            env = RecorderVideo(env, saved_path=os.path.join("videoes", bz_record_algo, "SuperMarioBros-Random-{}-{}-v0.gif".format(self.world, self.stage)))
+            env = RecorderVideo(env, saved_path=os.path.join("videoes", self.bz_record_algo, "SuperMarioBros-Random-{}-{}-v0.gif".format(self.world, self.stage)))
 
         env = NesFrameGrayHalf(env)
 
@@ -202,7 +203,7 @@ class MarioRandom(gym.Env):
         self.need_record = False
 
         bz_record = os.environ.get('BZ_RECORD')
-        bz_record_algo = os.environ.get('BZ_RECORD_ALGO')
+        self.bz_record_algo = os.environ.get('BZ_RECORD_ALGO')
 
         if bz_record and bz_record == "1":
             self.need_record = True
