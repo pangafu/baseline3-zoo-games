@@ -36,6 +36,8 @@ register(id='BZ-Mario-8-2-v0', entry_point='gym_bz_games:Mario82')
 register(id='BZ-Mario-8-3-v0', entry_point='gym_bz_games:Mario83')
 register(id='BZ-Mario-8-4-v0', entry_point='gym_bz_games:Mario84')
 
+register(id='BZ-MarioRandom-v0', entry_point='gym_bz_games:MarioRandom')
+
 register(id='BZ-Tetris-v0', entry_point='gym_bz_games:Tetris')
 register(id='BZ-Tetris2-v0', entry_point='gym_bz_games:Tetris2')
 

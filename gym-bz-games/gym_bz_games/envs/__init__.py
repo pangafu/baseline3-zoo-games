@@ -37,6 +37,10 @@ from .mario import (
     Mario84,
 )
 
+from .mario2 import (
+    MarioRandom,
+)
+
 from .tetris import (
     Tetris,
 )
