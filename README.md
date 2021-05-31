@@ -39,15 +39,16 @@ https://github.com/pangafu/baseline3-zoo-games-logs
     git clone https://github.com/pangafu/baseline3-zoo-games-logs.git
     
 # Train
-    ./scripts/train.ppo.mario.sh
+    ./train.sh ppo BZ-Mario-v0 
+
+# Train continue
+    ./train.sh ppo BZ-Mario-v0 logs/ppo/BZ-Mario——v0_1/best_model.zip
     
-    
-# Test
-    ./scripts/test.ppo.mario.sh
-    
+# Test 
+    ./test.sh ppo BZ-Mario-v0 
     
 # Clear (clear all trained model, beware to use!)
-    ./scripts/test.ppo.mario.sh
+    ./clear.sh ppo BZ-Mario-v0 
     
 # Result
 |  Game            | PPO  | QRDQN |
