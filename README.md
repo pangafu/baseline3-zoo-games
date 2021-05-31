@@ -12,6 +12,18 @@ https://github.com/pangafu/baseline3-zoo-games-videoes
 ## PPO - Tetris2
 ![ppo - Tetris2](https://github.com/pangafu/baseline3-zoo-games-videoes/raw/main/ppo/Tetris2-v0.gif)
 
+# games
+I have make or wrap games bellow in gym-bz-games/
+|  GameName            | INFO |
+| ---------------  | ---- | 
+| BZ-Mario-v0        |    default mario world 1 stage 1  | 
+| BZ-Mario-X-Y-v0    |    mario world X: world 1-8    Y: stage:1-4  | 
+| BZ-MarioRandom-v0  |    mario world random choose  | 
+| BZ-Tetris-v0       |    nes tetris   | 
+| BZ-Tetris2-v0      |    tetris game in python with drop info and full info(can clear line, score up/down ...)  | 
+| BZ-Tetris3-v0      |    tetris game in python with drop info (without info maybe evolved some advanced strategies) | 
+
+
 # models
 All modeles put in
 https://github.com/pangafu/baseline3-zoo-games-logs
