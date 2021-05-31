@@ -43,6 +43,7 @@ https://github.com/pangafu/baseline3-zoo-games-logs
 | BZ-Tetris2-v0  | [well](https://github.com/pangafu/baseline3-zoo-games-logs/tree/main/ppo/BZ-Tetris2-v0_1/) |  - |
 | BZ-Mario-1-1-v0  | [pass](https://github.com/pangafu/baseline3-zoo-games-logs/tree/main/ppo/BZ-Mario-1-1-v0_1) |  - |
 | BZ-Mario-1-2-v0  | [pass](https://github.com/pangafu/baseline3-zoo-games-logs/tree/main/ppo/BZ-Mario-1-2-v0_1) |  - |
+| BZ-MarioRandom-v0  | - |  - |
 
 # Citing the Project
 To cite this repository in publications:
