@@ -7,6 +7,7 @@ https://github.com/pangafu/baseline3-zoo-games-videoes
 
 ## PPO - Super Mario Bros.
 ![ppo_SuperMarioBros-1-1](https://github.com/pangafu/baseline3-zoo-games-videoes/raw/main/ppo/SuperMarioBros-1-1-v0.gif)
+![ppo_SuperMarioBros-1-2](https://github.com/pangafu/baseline3-zoo-games-videoes/raw/main/ppo/SuperMarioBros-1-2-v0.gif)
 
 ## PPO - Tetris2
 ![ppo - Tetris2](https://github.com/pangafu/baseline3-zoo-games-videoes/raw/main/ppo/Tetris2-v0.gif)
@@ -41,37 +42,7 @@ https://github.com/pangafu/baseline3-zoo-games-logs
 | ---------------  | ---- |  ---- | 
 | BZ-Tetris2-v0  | [well](https://github.com/pangafu/baseline3-zoo-games-logs/tree/main/ppo/BZ-Tetris2-v0_1/) |  - |
 | BZ-Mario-1-1-v0  | [pass](https://github.com/pangafu/baseline3-zoo-games-logs/tree/main/ppo/BZ-Mario-1-1-v0_1) |  - |
-| BZ-Mario-1-2-v0  | - |  - |
-| BZ-Mario-1-3-v0  | - |  - |
-| BZ-Mario-1-4-v0  | - |  - |
-| BZ-Mario-2-1-v0  | - |  - |
-| BZ-Mario-2-2-v0  | - |  - |
-| BZ-Mario-2-3-v0  | - |  - |
-| BZ-Mario-2-4-v0  | - |  - |
-| BZ-Mario-3-1-v0  | - |  - |
-| BZ-Mario-3-2-v0  | - |  - |
-| BZ-Mario-3-3-v0  | - |  - |
-| BZ-Mario-3-4-v0  | - |  - |
-| BZ-Mario-4-1-v0  | - |  - |
-| BZ-Mario-4-2-v0  | - |  - |
-| BZ-Mario-4-3-v0  | - |  - |
-| BZ-Mario-4-4-v0  | - |  - |
-| BZ-Mario-5-1-v0  | - |  - |
-| BZ-Mario-5-2-v0  | - |  - |
-| BZ-Mario-5-3-v0  | - |  - |
-| BZ-Mario-5-4-v0  | - |  - |
-| BZ-Mario-6-1-v0  | - |  - |
-| BZ-Mario-6-2-v0  | - |  - |
-| BZ-Mario-6-3-v0  | - |  - |
-| BZ-Mario-6-4-v0  | - |  - |
-| BZ-Mario-7-1-v0  | - |  - |
-| BZ-Mario-7-2-v0  | - |  - |
-| BZ-Mario-7-3-v0  | - |  - |
-| BZ-Mario-7-4-v0  | - |  - |
-| BZ-Mario-8-1-v0  | - |  - |
-| BZ-Mario-8-2-v0  | - |  - |
-| BZ-Mario-8-3-v0  | - |  - |
-| BZ-Mario-8-4-v0  | - |  - |
+| BZ-Mario-1-2-v0  | [pass](https://github.com/pangafu/baseline3-zoo-games-logs/tree/main/ppo/BZ-Mario-1-2-v0_1) |  - |
 
 # Citing the Project
 To cite this repository in publications:
