@@ -175,6 +175,44 @@ BZ-Tetris3-v0:
                        net_arch=[dict(pi=[256, 512, 1024, 512, 256], vf=[256, 512, 1024, 512, 256])]
                        )"
 
+BZ-Tetris4-v0:
+  policy: 'MlpPolicy'
+  frame_stack: 4
+  n_envs: 16
+  n_timesteps: !!float 1e9
+  batch_size: 512
+  ent_coef: 1.312836252706057e-05
+  clip_range: 0.1
+  n_epochs: 20
+  max_grad_norm: 0.5
+  vf_coef: 0.5
+
+  # train begin
+  gamma: 0.95
+  gae_lambda: 0.9
+  learning_rate: !!float 5e-5
+  n_steps: 256
+  batch_size: 256
+
+  # train center
+  #gamma: 0.98
+  #gae_lambda: 0.94
+  #learning_rate: !!float 2.5e-5
+  #n_steps: 512
+  #batch_size: 512
+
+  # train end
+  #gamma: 0.995
+  #gae_lambda: 0.99
+  #learning_rate: !!float 1e-5
+  #n_steps: 1024
+  #batch_size: 1024
+
+
+  policy_kwargs: "dict(activation_fn=nn.Tanh,
+                       net_arch=[dict(pi=[256, 512, 512, 256], vf=[256, 512, 512, 256])]
+                       )"
+
 
 
 BZ-Tetris-v0:

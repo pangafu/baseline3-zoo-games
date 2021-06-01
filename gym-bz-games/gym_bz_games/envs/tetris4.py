@@ -18,7 +18,7 @@ from gym.spaces import Discrete
 class Tetris4(gym.Env):
     metadata = {'render.modes':[ 'human', 'none','detail']}
 
-    def __init__(self, height=30, width=15, block_size=10):
+    def __init__(self, height=20, width=10, block_size=10):
         self.height = height
         self.width = height
         self.block_size = block_size
@@ -41,7 +41,7 @@ class Tetris4(gym.Env):
         self.env = TetrisEnv(self.height, self.width, self.block_size)
 
         self.action_space = Discrete(self.width*4)
-        self.observation_space =  Box(low=0, high=self.height, shape=(self.width*4, 4), dtype=np.uint8)
+        self.observation_space =  Box(low=0, high=self.height, shape=(self.width*4, 5), dtype=np.uint8)
 
         self.viewer = None
 
@@ -65,13 +65,17 @@ class Tetris4(gym.Env):
 
 
     def get_last_states_actions(self):
-        next_steps = env.get_next_states()
+        next_steps = self.env.get_next_states()
         next_actions, next_states = zip(*next_steps.items())
         self.last_states = np.array(next_states)
         self.last_actions = np.array(next_actions)
         self.last_states_full = np.concatenate([self.last_states, np.zeros((self.width*4 - len(self.last_states),4))],axis=0)
         self.last_states_full = self.last_states_full.astype(np.uint8)
-        
+        self.last_states_full =  np.insert(self.last_states_full, 0, values=np.zeros(self.width*4), axis=1)
+
+        for i in range(len(self.last_states)):
+            self.last_states_full[i, 0] = i
+
         return self.last_states_full
 
 
@@ -81,13 +85,13 @@ class Tetris4(gym.Env):
 
     def step(self, action):
 
-        reward, done = self.env.step(get_action(action))
+        reward, done = self.env.step(self.get_action(action))
         self.last_reward = reward
         self.last_done = done
-        
+
         # reward sum
         self.curr_reward_sum += self.last_reward
-        
+
         if self.curr_clear_lines < self.env.cleared_lines:
             print(">> CLEAR LINES : Score:{} Pieces:{} Lines:{}".format(self.env.score, self.env.tetrominoes, self.env.cleared_lines))
             self.curr_clear_lines = self.env.cleared_lines
@@ -125,7 +129,7 @@ class Tetris4(gym.Env):
 
     def render(self, mode='human'):
         # if self.last_reward != 0:
-        if mode == 'human':
+        if mode == 'human1':
             if self.viewer is None:
                 self.viewer = ImageViewer( caption="Tetris4", height=self.height*self.block_size, width=self.width*self.block_size)
 

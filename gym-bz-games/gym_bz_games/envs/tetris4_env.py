@@ -247,24 +247,25 @@ class TetrisEnv:
 
         img = np.concatenate((img, self.extra_board), axis=1)
 
-        if show:
-            cv2.putText(img, "Score:", (self.width * self.block_size + int(self.block_size / 2), self.block_size),
+        cv2.putText(img, "Score:", (self.width * self.block_size + int(self.block_size / 2), self.block_size),
                         fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=self.text_color)
-            cv2.putText(img, str(self.score),
+        cv2.putText(img, str(self.score),
                         (self.width * self.block_size + int(self.block_size / 2), 2 * self.block_size),
                         fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=self.text_color)
 
-            cv2.putText(img, "Pieces:", (self.width * self.block_size + int(self.block_size / 2), 4 * self.block_size),
+        cv2.putText(img, "Pieces:", (self.width * self.block_size + int(self.block_size / 2), 4 * self.block_size),
                         fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=self.text_color)
-            cv2.putText(img, str(self.tetrominoes),
+        cv2.putText(img, str(self.tetrominoes),
                         (self.width * self.block_size + int(self.block_size / 2), 5 * self.block_size),
                         fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=self.text_color)
 
-            cv2.putText(img, "Lines:", (self.width * self.block_size + int(self.block_size / 2), 7 * self.block_size),
+        cv2.putText(img, "Lines:", (self.width * self.block_size + int(self.block_size / 2), 7 * self.block_size),
                         fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=self.text_color)
-            cv2.putText(img, str(self.cleared_lines),
+        cv2.putText(img, str(self.cleared_lines),
                         (self.width * self.block_size + int(self.block_size / 2), 8 * self.block_size),
                         fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=self.text_color)
+
+        if show:
 
             if video:
                 video.write(img)
