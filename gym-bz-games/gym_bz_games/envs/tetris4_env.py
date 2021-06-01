@@ -5,7 +5,7 @@ import numpy as np
 from PIL import Image
 import cv2
 from matplotlib import style
-import torch
+#import torch
 import random
 
 style.use("ggplot")
@@ -45,7 +45,7 @@ class Tetris:
          [7, 7, 7]]
     ]
 
-    def __init__(self, height=20, width=10, block_size=20):
+    def __init__(self, height=20, width=10, block_size=10):
         self.height = height
         self.width = width
         self.block_size = block_size
@@ -84,7 +84,8 @@ class Tetris:
         holes = self.get_holes(board)
         bumpiness, height = self.get_bumpiness_and_height(board)
 
-        return torch.FloatTensor([lines_cleared, holes, bumpiness, height])
+        #return torch.FloatTensor([lines_cleared, holes, bumpiness, height])
+        return [lines_cleared, holes, bumpiness, height]
 
     def get_holes(self, board):
         num_holes = 0
@@ -248,25 +249,28 @@ class Tetris:
 
 
         cv2.putText(img, "Score:", (self.width * self.block_size + int(self.block_size / 2), self.block_size),
-                    fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=1.0, color=self.text_color)
+                    fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=self.text_color)
         cv2.putText(img, str(self.score),
                     (self.width * self.block_size + int(self.block_size / 2), 2 * self.block_size),
-                    fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=1.0, color=self.text_color)
+                    fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=self.text_color)
 
         cv2.putText(img, "Pieces:", (self.width * self.block_size + int(self.block_size / 2), 4 * self.block_size),
-                    fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=1.0, color=self.text_color)
+                    fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=self.text_color)
         cv2.putText(img, str(self.tetrominoes),
                     (self.width * self.block_size + int(self.block_size / 2), 5 * self.block_size),
-                    fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=1.0, color=self.text_color)
+                    fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=self.text_color)
 
         cv2.putText(img, "Lines:", (self.width * self.block_size + int(self.block_size / 2), 7 * self.block_size),
-                    fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=1.0, color=self.text_color)
+                    fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=self.text_color)
         cv2.putText(img, str(self.cleared_lines),
                     (self.width * self.block_size + int(self.block_size / 2), 8 * self.block_size),
-                    fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=1.0, color=self.text_color)
+                    fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.5, color=self.text_color)
 
         if video:
             video.write(img)
 
         cv2.imshow("Deep Q-Learning Tetris", img)
         cv2.waitKey(1)
+
+    def close(self):
+        cv2.destroyAllWindows()
