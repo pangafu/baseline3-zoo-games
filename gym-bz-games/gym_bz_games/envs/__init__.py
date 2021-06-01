@@ -55,3 +55,7 @@ from .tetris3 import (
     Tetris3,
 )
 
+
+from .tetris4 import (
+    Tetris4,
+)
