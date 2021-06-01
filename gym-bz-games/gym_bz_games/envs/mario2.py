@@ -174,6 +174,7 @@ class MarioRandom(gym.Env):
         if self.env is not None:
             self.env.close()
 
+        random.seed()
         self.world = random.randint(1, 8)
         self.stage = random.randint(1,4)
 
