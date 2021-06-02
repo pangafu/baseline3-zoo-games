@@ -56,28 +56,28 @@ BZ-MarioRandom-v0:
   n_epochs: 20
 
   # train begin
-  gamma: 0.9
-  gae_lambda: 0.8
-  learning_rate: !!float 1e-4
-  n_steps: 1024
-  batch_size: 256
-  clip_range: 0.5
-  clip_range_vf: 0.5
-  ent_coef: 0.0
-  max_grad_norm: 0.5
-  vf_coef: 0.5
-
-  # train center
-  #gamma: 0.95
-  #gae_lambda: 0.9
-  #learning_rate: !!float 3e-5
+  #gamma: 0.9
+  #gae_lambda: 0.8
+  #learning_rate: !!float 1e-4
   #n_steps: 1024
   #batch_size: 256
-  #clip_range: 0.3
-  #clip_range_vf: 0.3
+  #clip_range: 0.5
+  #clip_range_vf: 0.5
   #ent_coef: 0.0
   #max_grad_norm: 0.5
   #vf_coef: 0.5
+
+  # train center
+  gamma: 0.95
+  gae_lambda: 0.9
+  learning_rate: !!float 3e-5
+  n_steps: 1024
+  batch_size: 256
+  clip_range: 0.3
+  clip_range_vf: 0.3
+  ent_coef: 0.0
+  max_grad_norm: 0.5
+  vf_coef: 0.5
 
 
   # train end
@@ -172,7 +172,7 @@ BZ-Tetris3-v0:
 
 
   policy_kwargs: "dict(activation_fn=nn.Tanh,
-                       net_arch=[dict(pi=[256, 512, 1024, 512, 256], vf=[256, 512, 1024, 512, 256])]
+                       net_arch=[dict(pi=[256, 512, 512, 256], vf=[256, 512, 512, 256])]
                        )"
 
 BZ-Tetris4-v0:

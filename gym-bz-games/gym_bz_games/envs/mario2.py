@@ -193,6 +193,8 @@ class MarioRandom(gym.Env):
 
         env = CustomReward(env, self.world, self.stage)
 
+        if self.env is not None:
+            env.max_reward = self.env.max_reward
 
         self.env = env
 

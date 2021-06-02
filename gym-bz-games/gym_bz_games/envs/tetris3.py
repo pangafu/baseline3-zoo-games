@@ -19,7 +19,7 @@ class Tetris3CustomState(gym.Wrapper):
         super(Tetris3CustomState, self).__init__(env)
         self.grid_height = 23
         self.grid_width = 10
-        self.observation_space = spaces.Box(low=0, high=7, shape=(4, self.grid_height, self.grid_width), dtype=np.float32)
+        self.observation_space = spaces.Box(low=0, high=7, shape=(5, self.grid_height, self.grid_width), dtype=np.float32)
 
     def step(self, action):
         state, reward, done, info = self.env.step(action)
@@ -72,15 +72,18 @@ class Tetris3CustomState(gym.Wrapper):
         drop_grid_score, drop_clear_line_num, drop_line_blank, drop_half_holes, drop_dead_holes, drop_border_height = self.computer_detail(grid_drop_detail)
 
         # grid_info  : 0 none, 7 : info, (line<=6)   8 : score up/ can clear, 9: score down
-        '''
+
         pos = self.grid_height - 1
-        if drop_grid_score >= ori_grid_score:
+        if drop_grid_score > ori_grid_score and drop_clear_line_num > 1:
+            grid_info[pos, 0] = 7
+        elif drop_grid_score > ori_grid_score and drop_line_blank <= ori_line_blank and drop_half_holes <= ori_half_holes and drop_dead_holes <= ori_dead_holes and drop_border_height <= ori_border_height:
             grid_info[pos, 0] = 7
         else:
             grid_info[pos, 0] = 0
 
-        if drop_clear_line_num > 0:
+        if drop_clear_line_num > 1:
             grid_info[pos, 1] = 7
+
 
         if drop_line_blank > ori_line_blank:
             grid_info[pos, 2] = 0
@@ -102,14 +105,17 @@ class Tetris3CustomState(gym.Wrapper):
         else:
             grid_info[pos, 5] = 7
 
-        '''
+        if drop_clear_line_num > 1:
+            grid_info[pos, 6] = drop_clear_line_num
+        else:
+            grid_info[pos, 6] = 0
 
         info['ori_score'] = [ori_grid_score, ori_clear_line_num, ori_line_blank, ori_half_holes, ori_dead_holes, ori_border_height]
         info['drop_score'] = [drop_grid_score, drop_clear_line_num, drop_line_blank, drop_half_holes, drop_dead_holes, drop_border_height]
 
         #return state
-        #return np.array((grid_ori, grid_ori_detail, grid_drop, grid_drop_detail, grid_info))
-        return np.array((grid_ori, grid_ori_detail, grid_drop, grid_drop_detail))
+        return np.array((grid_ori, grid_ori_detail, grid_drop, grid_drop_detail, grid_info))
+        #return np.array((grid_ori, grid_ori_detail, grid_drop, grid_drop_detail))
 
 
     # grid_drop    : 1: blank, 4: block, 6: control
@@ -429,7 +435,7 @@ class Tetris3(gym.Env):
 
     def render(self, mode='human'):
         # if self.last_reward != 0:
-        if mode == 'human1':
+        if mode == 'human':
             if self.viewer is None:
                 self.viewer = ImageViewer( caption="Tetris3", height=23*self.image_scale, width=10*self.image_scale)
 
