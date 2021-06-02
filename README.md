@@ -22,6 +22,7 @@ I have make or wrap games bellow in gym-bz-games/
 | BZ-Tetris-v0       |    nes tetris   | 
 | BZ-Tetris2-v0      |    tetris game in python with drop info and full info(can clear line, score up/down ...)  | 
 | BZ-Tetris3-v0      |    tetris game in python with drop info (without info maybe evolved some advanced strategies) | 
+| BZ-Tetris4-v0      |    tetris game in python in direct drop mode(drop with pos, rotate action) | 
 
 
 # models
