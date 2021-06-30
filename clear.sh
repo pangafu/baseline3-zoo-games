@@ -8,7 +8,7 @@ fi
 if [ ! $2 ]; then
   echo "env is blank, Please Input the 2 parameter."
   exit 1
-else
+else 
   echo "env is $2"
 fi 
 
